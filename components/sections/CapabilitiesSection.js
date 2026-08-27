@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Container from '@/components/ui/Container';
 import SectionHeading from './SectionHeading';
 import { capabilities } from '@/content/capabilities';
@@ -7,7 +8,13 @@ import { capabilities } from '@/content/capabilities';
  * heading on the left, an indexed list of what the agent actually does on the
  * right, separated by hairlines.
  */
-export default function CapabilitiesSection({ id = 'capabilities' }) {
+/**
+ * `limit` keeps the homepage from repeating the full list that /features
+ * exists to carry: the homepage shows the first few and links onward.
+ */
+export default function CapabilitiesSection({ id = 'capabilities', limit, heading, lead }) {
+  const shown = limit ? capabilities.slice(0, limit) : capabilities;
+
   return (
     <section id={id} aria-labelledby={`${id}-heading`} className="relative py-24 lg:py-36">
       <Container>
@@ -16,13 +23,16 @@ export default function CapabilitiesSection({ id = 'capabilities' }) {
             <SectionHeading
               id={`${id}-heading`}
               eyebrow="Platform capabilities"
-              title="Everything the agent runs, end to end"
-              lead="One workflow instead of a stack of disconnected tools — research, strategy, creation, publishing, measurement and refinement, all reading from the same picture of your site."
+              title={heading || 'Everything the agent runs, end to end'}
+              lead={
+                lead ||
+                'One workflow instead of a stack of disconnected tools — research, strategy, creation, publishing, measurement and refinement, all reading from the same picture of your site.'
+              }
             />
           </div>
 
           <ol className="border-t border-white/8">
-            {capabilities.map((capability, index) => (
+            {shown.map((capability, index) => (
               <li
                 key={capability.title}
                 className="group grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-b border-white/8 py-6 transition-colors duration-500 hover:bg-white/[0.015] sm:grid-cols-[3.5rem_1fr] sm:gap-x-8 sm:py-7"
@@ -42,6 +52,14 @@ export default function CapabilitiesSection({ id = 'capabilities' }) {
               </li>
             ))}
           </ol>
+
+          {limit && capabilities.length > limit ? (
+            <p className="lg:col-start-2">
+              <Link href="/features" className="link-underline mt-8 inline-block text-sm text-[var(--scene-glow)]">
+                All {capabilities.length} capabilities
+              </Link>
+            </p>
+          ) : null}
         </div>
       </Container>
     </section>

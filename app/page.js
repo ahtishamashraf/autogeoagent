@@ -52,7 +52,11 @@ export default function HomePage() {
 
       {/* Deeper, crawlable content — not a repeat of the story above */}
       <div className="relative z-10 bg-void">
-        <CapabilitiesSection />
+        <CapabilitiesSection
+          limit={6}
+          heading="One agent, the whole search workflow"
+          lead="Research, strategy, creation, publishing, measurement and refinement — running as one loop instead of six tools you have to join up yourself."
+        />
         <SeoGeoSection />
         <WhySection />
         <UseCasesSection />
