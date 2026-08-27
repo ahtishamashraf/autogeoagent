@@ -552,6 +552,22 @@
 .anim-ring { animation: ggaPulseRing 3s ease-out infinite; }
 
 /* ================================================================== */
+/*  Scene UI layer                                                     */
+/* ================================================================== */
+/* The decorative scene layer stays hidden until ScrollController has
+   measured --scene-band. Its fallback band and its measured band differ, and
+   painting the fallback first would show a layout shift in a layer that is
+   meant to be empty at the top of the page anyway. Nothing readable lives
+   here: see components/experience/SceneUI.js. */
+.scene-ui-layer {
+  visibility: hidden;
+}
+
+:root[data-scene-band] .scene-ui-layer {
+  visibility: visible;
+}
+
+/* ================================================================== */
 /*  Reduced motion                                                     */
 /* ================================================================== */
 @media (prefers-reduced-motion: reduce) {

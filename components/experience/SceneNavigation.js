@@ -5,6 +5,7 @@ import { navScenes } from '@/lib/scene-config';
 import { clamp, smoothstep } from '@/lib/animations';
 import { useMotionFrame, useSceneIndex } from '@/lib/hooks';
 import { cn } from '@/lib/cn';
+import { track } from '@/lib/analytics';
 import { useExperience } from './ScrollController';
 
 const FIRST = navScenes[0].index;
@@ -73,7 +74,10 @@ export default function SceneNavigation() {
               />
               <button
                 type="button"
-                onClick={() => scrollToScene(scene.index)}
+                onClick={() => {
+                  track('scene_navigate', { scene: scene.index, label: scene.label });
+                  scrollToScene(scene.index);
+                }}
                 aria-current={isActive ? 'true' : undefined}
                 className={cn(
                   'pointer-events-auto group flex flex-col items-start gap-0.5 text-left transition-opacity duration-500',

@@ -17,8 +17,14 @@ import ImproveLoop from './ui/ImproveLoop';
  */
 export default function SceneUI() {
   return (
-    <div aria-hidden="true" className="reduced-hide pointer-events-none absolute inset-0 xl:left-[11.5rem] xl:right-8">
+    <div aria-hidden="true" className="scene-ui-layer reduced-hide pointer-events-none absolute inset-0 xl:left-[11.5rem] xl:right-8">
       {/*
+        The layer stays invisible until ScrollController has measured
+        `--scene-band` (html[data-scene-band]). The fallback band and the
+        measured one differ, and painting the fallback first would show — and
+        score — a layout shift for a layer that is meant to be empty at the top
+        of the page anyway.
+
         Every interface is confined to the band below the copy. `--scene-band`
         is measured from the real scene headings by ScrollController, so a panel
         can never be laid out underneath a heading at any viewport size.

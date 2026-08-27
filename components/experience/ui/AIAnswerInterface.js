@@ -5,6 +5,7 @@ import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, mapRange, smoothstep, stagedTime, stagger } from '@/lib/animations';
 import { usesTopBand } from '@/lib/scene-config';
 import { DataNote, Frame, FrameBar, StatusDot } from './primitives';
+import { site } from '@/lib/site';
 
 /**
  * Scene 02 — AI DISCOVERY.
@@ -21,7 +22,7 @@ const ANSWER =
   'Most teams automate the repeatable layer first: query research, intent classification, content structure and internal linking. An AI agent can run that loop continuously, then keep improving pages as search and answer engines change.';
 
 const SOURCES = [
-  { name: 'GetGeoAgent', path: 'getgeoagent.com', owned: true },
+  { name: site.name, path: site.domain, owned: true },
   { name: 'Search operations guide', path: 'industry-guide.com', owned: false },
   { name: 'Content automation study', path: 'research-notes.org', owned: false },
 ];

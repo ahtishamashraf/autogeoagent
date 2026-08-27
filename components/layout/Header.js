@@ -74,12 +74,15 @@ function MenuLink({ item, pathname, onClose, tabbable }) {
   );
 }
 
-function MegaMenu({ menu, open, onOpen, onClose, pathname }) {
+function MegaMenu({ menu, open, onOpen, onClose, onDismiss, pathname }) {
   const timer = useRef(0);
 
+  // Dismissal is scoped to this menu. A plain close here would let a menu the
+  // pointer has already left shut the neighbouring menu it just moved onto,
+  // 120ms after it opened.
   const scheduleClose = () => {
     window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(onClose, 120);
+    timer.current = window.setTimeout(() => onDismiss(menu.id), 120);
   };
   const cancelClose = () => window.clearTimeout(timer.current);
 
@@ -183,6 +186,12 @@ export default function Header() {
 
   const close = useCallback(() => setOpenState({ id: null, path: pathname }), [pathname]);
 
+  // Close only if this menu is still the open one.
+  const dismiss = useCallback(
+    (id) => setOpenState((current) => (current.id === id ? { id: null, path: current.path } : current)),
+    [],
+  );
+
   useEffect(() => {
     const onKey = (event) => {
       if (event.key === 'Escape') setOpenState((current) => ({ ...current, id: null }));
@@ -221,6 +230,7 @@ export default function Header() {
                   open={openMenu === menu.id}
                   onOpen={() => setOpenMenu(menu.id)}
                   onClose={close}
+                  onDismiss={dismiss}
                 />
               ) : (
                 <li key={menu.id}>

@@ -5,6 +5,7 @@ import Button from '@/components/ui/Button';
 import { Check } from '@/components/ui/Icons';
 import { site } from '@/lib/site';
 import { cn } from '@/lib/cn';
+import { track } from '@/lib/analytics';
 
 const TOPICS = ['General', 'Product question', 'Pricing', 'Partnership', 'Support'];
 
@@ -33,6 +34,8 @@ export default function ContactForm() {
       const result = await response.json();
 
       if (response.ok && result.ok) {
+        // Only on a delivery the server actually confirmed.
+        track('contact_submit', { topic: data.topic || 'General' });
         setStatus('sent');
         event.target.reset();
         return;

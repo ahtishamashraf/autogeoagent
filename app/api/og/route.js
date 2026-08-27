@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { site } from '@/lib/site';
 
 export const runtime = 'nodejs';
 export const contentType = 'image/png';
@@ -88,8 +89,8 @@ export async function GET(request) {
             paddingTop: 26,
           }}
         >
-          <div>getgeoagent.com</div>
-          <div style={{ color: accent }}>Rank in Search. Get Discovered by AI.</div>
+          <div>{site.domain}</div>
+          <div style={{ color: accent }}>{site.secondaryTagline}</div>
         </div>
       </div>
     ),

@@ -6,6 +6,7 @@ import FaqSection from './FaqSection';
 import RelatedLinks from './RelatedLinks';
 import CtaSection from './CtaSection';
 import Button from '@/components/ui/Button';
+import FeatureCta from './FeatureCta';
 import JsonLd from '@/components/seo/JsonLd';
 import { breadcrumbSchema, faqSchema, graph, webPageSchema } from '@/lib/seo';
 import { site } from '@/lib/site';
@@ -53,9 +54,7 @@ export default function FeaturePage({
             Start Free
           </Button>
           {doc.secondaryCta ? (
-            <Button href={doc.secondaryCta.href} variant="secondary" size="lg" magnetic={false}>
-              {doc.secondaryCta.label}
-            </Button>
+            <FeatureCta href={doc.secondaryCta.href} slug={doc.slug} label={doc.secondaryCta.label} />
           ) : null}
         </div>
       </PageHero>

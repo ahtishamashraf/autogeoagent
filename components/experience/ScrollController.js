@@ -1,6 +1,9 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+
+/** useLayoutEffect on the client, useEffect during SSR, without the warning. */
+const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
@@ -42,6 +45,36 @@ export default function ScrollController({ wrapperRef, children }) {
   /* ---------------------------------------------------------------- */
   /* Measurement                                                       */
   /* ---------------------------------------------------------------- */
+  /**
+   * Reserve the vertical band the scene headings occupy, measured rather than
+   * guessed, so a floating interface can never be laid out underneath a
+   * heading. Scenes differ in copy length; the tallest one wins so the
+   * interfaces never shift between scenes.
+   *
+   * Split out from the full measurement because it has to run before the first
+   * paint: the band's fallback value differs from the measured one, and
+   * correcting it after paint is a layout shift the user sees and Core Web
+   * Vitals counts.
+   */
+  const measureBand = useCallback(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    let band = 0;
+    wrapper.querySelectorAll('[data-copy-band]').forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const offsetTop = parseFloat(getComputedStyle(el.closest('.story-hold') || el).paddingTop) || 0;
+      band = Math.max(band, offsetTop + rect.height);
+    });
+    if (band <= 0) return;
+
+    const vh = window.innerHeight;
+    const gap = vh * 0.05;
+    const clamped = Math.min(Math.max(band + gap, vh * 0.24), vh * 0.55);
+    document.documentElement.style.setProperty('--scene-band', `${Math.round(clamped)}px`);
+    document.documentElement.dataset.sceneBand = 'measured';
+  }, [wrapperRef]);
+
   const measure = useCallback(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper) return;
@@ -64,21 +97,7 @@ export default function ScrollController({ wrapperRef, children }) {
     }
     b[SCENE_COUNT] = wrapperTop + wrapper.offsetHeight - vh;
 
-    // Reserve the vertical band the scene headings occupy, measured rather than
-    // guessed, so a floating interface can never be laid out underneath a
-    // heading. Scenes differ in copy length; the tallest one wins so the
-    // interfaces never shift between scenes.
-    let band = 0;
-    wrapper.querySelectorAll('[data-copy-band]').forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      const offsetTop = parseFloat(getComputedStyle(el.closest('.story-hold') || el).paddingTop) || 0;
-      band = Math.max(band, offsetTop + rect.height);
-    });
-    if (band > 0) {
-      const gap = vh * 0.05;
-      const clamped = Math.min(Math.max(band + gap, vh * 0.24), vh * 0.55);
-      document.documentElement.style.setProperty('--scene-band', `${Math.round(clamped)}px`);
-    }
+    measureBand();
 
     // Guarantee a strictly increasing, gap-free timeline even if a browser
     // reports odd sub-pixel geometry.
@@ -87,7 +106,7 @@ export default function ScrollController({ wrapperRef, children }) {
     }
 
     experienceState.ready = true;
-  }, [wrapperRef]);
+  }, [wrapperRef, measureBand]);
 
   /* ---------------------------------------------------------------- */
   /* Per-frame update                                                  */
@@ -173,6 +192,15 @@ export default function ScrollController({ wrapperRef, children }) {
     },
     [],
   );
+
+  // Before the first paint, so the band never has to be corrected afterwards.
+  useIsoLayoutEffect(() => {
+    measureBand();
+    if (!document.fonts?.ready) return undefined;
+    let cancelled = false;
+    document.fonts.ready.then(() => { if (!cancelled) measureBand(); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [measureBand]);
 
   /* ---------------------------------------------------------------- */
   /* Setup                                                             */

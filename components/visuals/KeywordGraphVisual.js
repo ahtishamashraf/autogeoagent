@@ -70,10 +70,13 @@ export default function KeywordGraphVisual() {
       node.style.opacity = appear.toFixed(3);
       node.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)})`);
 
-      // Intent classification lands before the migration begins.
+      // Intent classification lands before the migration begins, and the
+      // label stays after it: the dot colour alone would leave the
+      // classification legible only to people who can distinguish the hues,
+      // and a reduced-motion reader only ever sees this settled frame.
       const intent = stagger(t, i, QUERIES.length, 0.4, 0.58);
       const badge = node.querySelector('[data-intent]');
-      if (badge) badge.style.opacity = (intent * (1 - migrate)).toFixed(3);
+      if (badge) badge.style.opacity = (intent * lerp(1, 0.82, migrate)).toFixed(3);
       const dot = node.querySelector('[data-dot]');
       if (dot) dot.style.fill = intent > 0.5 ? INTENT_COLOR[query.intent] : 'rgba(148,176,220,0.45)';
     });

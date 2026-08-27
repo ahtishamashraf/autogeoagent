@@ -3,8 +3,9 @@
 The public website for **GetGeoAgent**, an AI agent for SEO (Search Engine
 Optimization) and GEO (Generative Engine Optimization).
 
-Production domain: `https://getgeoagent.com`
+Canonical domain: `https://www.autogeoagent.com`
 Application: `https://app.autogeoagent.com`
+Visible brand: **GetGeoAgent** — independent of the domain, see [Domains](#domains).
 
 ---
 
@@ -78,9 +79,11 @@ Everything brand-, legal- and deployment-specific lives in **`lib/site.js`**.
 | `lib/site.js` | `legal.legalEntityName` | Registered company name |
 | `lib/site.js` | `legal.registeredAddress` | Registered business address |
 | `lib/site.js` | `legal.jurisdiction` | Governing law and courts |
-| `lib/site.js` | `contactEmail`, `supportEmail`, `privacyEmail` | Currently plausible defaults on the brand domain — confirm they exist |
+| `lib/site.js` | `contactEmail`, `supportEmail`, `privacyEmail` | Currently plausible defaults on the canonical domain — confirm they exist |
 | `lib/site.js` | `social` | Only add profiles that genuinely exist; empty entries are omitted from JSON-LD |
-| `lib/pricing.js` | `published`, `plans` | No prices are shown until `published: true` and `plans` are filled in |
+| `lib/pricing.js` | `plans[].price` | Published prices. Confirm each one before launch |
+| `lib/pricing.js` | `annual` | The 20% annual discount is advertised. Turn it off (`enabled: false`) unless annual billing genuinely exists in the application |
+| `lib/pricing.js` | `plans[].features` | Only list what the application actually does today |
 
 The privacy policy and terms of service are written as standard SaaS documents
 around those placeholders. **They must be reviewed by qualified counsel before
@@ -99,10 +102,54 @@ CONTACT_TO_EMAIL=…
 CONTACT_FROM_EMAIL=…               # must be a verified sender
 ```
 
+## Domains
+
+| Host | Behaviour |
+| --- | --- |
+| `www.autogeoagent.com` | **Canonical.** Every canonical, Open Graph URL, sitemap entry and JSON-LD `@id` is built from it |
+| `autogeoagent.com` | 308 redirect to the canonical host |
+| `getgeoagent.com`, `www.getgeoagent.com` | 308 redirect to the canonical host |
+| `autogeoagent.vercel.app` | Served, but `X-Robots-Tag: noindex, nofollow`. Set `REDIRECT_VERCEL_HOST=1` to redirect it instead |
+| `app.autogeoagent.com` | The product application. Not part of this site and never used as a canonical |
+
+The canonical origin lives in one place — `SITE_URL` in `lib/site.js`, overridable
+with `NEXT_PUBLIC_SITE_URL`. Host normalisation is in `middleware.js`.
+
+The visible brand is **GetGeoAgent** (`site.name`) and is deliberately independent
+of the domain: moving where the site is hosted does not rename the product.
+
+## Launch checklist
+
+1. **DNS** — point `www.autogeoagent.com` at the deployment and add the apex plus
+   any legacy hosts so `middleware.js` can redirect them.
+2. **Vercel host** — once DNS resolves, set `REDIRECT_VERCEL_HOST=1` so
+   `autogeoagent.vercel.app` redirects instead of merely being noindexed.
+3. **Search Console** — verify the `https://www.autogeoagent.com` property (a
+   domain property covers the apex too), submit `https://www.autogeoagent.com/sitemap.xml`,
+   and use the URL Inspection tool on the homepage and two interior pages to
+   confirm the canonical Google picks matches the one declared.
+4. **Bing Webmaster Tools** — verify the same property and submit the same
+   sitemap; it can import the Search Console verification.
+5. **Analytics** — set `NEXT_PUBLIC_GA_ID` to load GA4. Without it no analytics
+   script is loaded at all, and events still queue on `window.dataLayer` for a
+   tag manager. Events emitted: `signup_click`, `login_click`, `pricing_cta`,
+   `pricing_toggle`, `feature_cta`, `contact_submit`, `scene_navigate`.
+6. **Contact delivery** — configure one of the options below, then submit the
+   form once and confirm the message arrives.
+7. **Legal** — replace the `lib/site.js` placeholders and have counsel review
+   the privacy policy and terms.
+8. **Pricing** — confirm every figure in `lib/pricing.js`, including whether
+   annual billing exists. Nothing on the pricing page should describe a plan the
+   application cannot actually provision.
+9. **Structured data** — run the homepage, `/pricing`, `/how-it-works` and one
+   blog post through Google's Rich Results Test after the domain is live.
+10. **Preview deployments** — these are noindexed automatically by
+    `lib/deployment.js`; no action needed.
+
 ## SEO and GEO
 
-- Every page is server-rendered with a self-canonical on `getgeoagent.com` —
-  never on the application domain.
+- Every page is server-rendered with a self-canonical on the canonical host —
+  never on the application domain, the apex or the Vercel host.
 - `lib/routes.js` is the route registry; `sitemap.xml`, `llms.txt`,
   `llms-full.txt` and the footer all read from it.
 - `lib/seo.js` builds the JSON-LD graph. It never emits reviews, ratings,
@@ -115,7 +162,12 @@ CONTACT_FROM_EMAIL=…               # must be a verified sender
 
 | Path | Contains |
 | --- | --- |
-| `content/story.js` | The seven workflow stages, shared by the homepage and `/how-it-works` |
+| `content/story.js` | The seven cinematic scenes — written for motion, used only by the homepage |
+| `content/how-it-works.js` | The definitive eight-stage loop, used by `/how-it-works` and `llms-full.txt` |
+| `content/product/` | The nine capability pages |
+| `content/ai-search/` | The five AI-surface pages |
+| `content/solutions/` | The four industry pages |
+| `content/resources/glossary.js` | Glossary terms, also emitted as `DefinedTermSet` |
 | `content/capabilities.js` | Platform capabilities, use cases, principles |
 | `content/faqs.js` | Homepage and pricing FAQs (also emitted as `FAQPage`) |
 | `content/learn/` | The long-form educational pages |
@@ -135,3 +187,6 @@ The site is deliberately conservative:
   *Illustrative data* or *AI visibility simulation*.
 - No guarantees of rankings, traffic or AI citations anywhere — the language is
   "designed to improve", "helps build visibility", "optimize for".
+- `/research` publishes a method and no findings, because no study has been run.
+- Blog references link to primary documentation, and `citation` in the Article
+  schema is emitted only from those real links.
