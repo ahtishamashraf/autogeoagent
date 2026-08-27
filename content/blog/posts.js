@@ -10,7 +10,237 @@ import { site } from '@/lib/site';
 
 const rawPosts = [
   {
+    slug: 'structure-a-page-for-ai-answers',
+    metaDescription:
+      'Page structure for retrieval: what makes a passage usable on its own, why the first eighty words decide most of it, and the habits that hurt.',
+    title: 'How to Structure a Page So an AI Answer Can Use It',
+    excerpt:
+      'A long-form guide to page structure for retrieval: what makes a passage usable on its own, why the first eighty words decide most of it, and the structural habits that quietly make a page unquotable.',
+    category: 'GEO',
+    publishedAt: '2026-08-19',
+    sources: [
+      { label: 'Google Search Central — Documentation', href: 'https://developers.google.com/search/docs' },
+      {
+        label: 'Google Search Central — Intro to structured data markup',
+        href: 'https://developers.google.com/search/docs/appearance/structured-data/intro-structured-data',
+      },
+      { label: 'Schema.org vocabulary', href: 'https://schema.org/' },
+    ],
+    body: [
+      {
+        type: 'lead',
+        text: 'Systems that generate answers do not read a page the way a person does, and they rarely use all of it. They retrieve a piece. Everything below is about making sure the piece they retrieve makes sense without the rest of the page attached to it.',
+      },
+      {
+        type: 'answer',
+        label: 'The short version',
+        text: 'Answer the question in the first two sentences, make every section legible on its own, name things the same way everywhere, and put the qualifications next to the claims rather than at the bottom of the page.',
+      },
+      { type: 'h2', id: 'passage', text: 'The unit is the passage, not the page' },
+      {
+        type: 'p',
+        text: 'A retrieval system typically works with chunks: sections of a document, indexed and scored separately. That has an unglamorous consequence. A brilliant argument that only works if you have read the four hundred words above it is, from the retrieval system\u2019s point of view, an incomplete fragment — and an incomplete fragment is a risky thing to quote.',
+      },
+      {
+        type: 'p',
+        text: 'The practical test is blunt: take any section of your page, delete everything else, and read what is left. If it still answers a question a person would actually ask, the section is usable. If it starts with "This is why that matters", it is not.',
+      },
+      { type: 'h2', id: 'first-eighty', text: 'The first eighty words do most of the work' },
+      {
+        type: 'p',
+        text: 'The opening of a page is disproportionately valuable, for the same reason the opening of a news story is: it is where a direct answer is expected to be. A page that opens with three paragraphs of context before defining its own subject has spent its most quotable real estate on throat-clearing.',
+      },
+      {
+        type: 'steps',
+        items: [
+          {
+            title: 'State the answer',
+            text: 'One or two sentences that would satisfy someone who read nothing else. Not a promise that the answer is coming.',
+          },
+          {
+            title: 'Say what kind of thing it is',
+            text: 'Name the category explicitly. "GEO is a practice" tells a system more than "GEO is what everyone is talking about."',
+          },
+          {
+            title: 'Then expand',
+            text: 'Mechanism, caveats, examples, comparisons — in that order, each in its own section.',
+          },
+        ],
+      },
+      { type: 'h2', id: 'naming', text: 'Name things the same way, everywhere' },
+      {
+        type: 'p',
+        text: 'Internal inconsistency is expensive. If a product is called three different things across a site, every mention is slightly weaker evidence that they are all the same thing. The fix is boring and effective: pick one name, one description, one category, and repeat them without variation on every page that mentions the subject. Synonyms are for prose style, not for the sentence that defines what you are.',
+      },
+      { type: 'h2', id: 'structure', text: 'Structure that helps, and structure that only looks helpful' },
+      {
+        type: 'table',
+        caption: 'Structural choices, judged by whether a retrieved passage survives them.',
+        head: ['Choice', 'Effect on a retrieved passage'],
+        rows: [
+          ['Descriptive H2 that states a question', 'The passage arrives with its own context. Strong.'],
+          ['Clever, allusive H2', 'The passage arrives labelled with something meaningless. Weak.'],
+          ['Definition in its own short section', 'Directly usable. Strong.'],
+          ['Definition buried mid-paragraph', 'Retrievable only with the surrounding text. Weak.'],
+          ['Comparison as a table', 'Rows survive extraction intact. Strong.'],
+          ['Comparison as flowing prose', 'Extraction has to reconstruct the comparison. Weak.'],
+          ['Caveats beside the claim', 'The passage stays accurate on its own. Strong.'],
+          ['Caveats in a closing section', 'The claim can be quoted without them. Risky, and unfair to the reader.'],
+        ],
+      },
+      { type: 'h2', id: 'schema', text: 'Structured data, used honestly' },
+      {
+        type: 'p',
+        text: 'Schema.org markup states in machine-readable form what a page already says. That is its whole job. It is worth adding for the page types it genuinely fits — an article, an FAQ where the questions are really on the page, a product with a real price — and it is worth keeping accurate, because markup that disagrees with the visible page is a liability rather than a signal.',
+      },
+      {
+        type: 'callout',
+        title: 'What structured data will not do',
+        text: 'It does not make a thin page authoritative, it does not force inclusion in any answer, and marking up content that is not visible on the page is against Google\u2019s own structured data guidelines. Treat it as accurate labelling, not as leverage.',
+      },
+      { type: 'h2', id: 'habits', text: 'Four habits that quietly make a page unquotable' },
+      {
+        type: 'ul',
+        items: [
+          'Pronouns doing heavy lifting across section boundaries — "it", "this approach", "the above" — so a lifted passage refers to something that is not there.',
+          'A definition that only exists in the meta description or the page title, and never in the body.',
+          'Numbers with no date attached, which cannot be safely repeated a year later.',
+          'The single most useful sentence on the page rendered inside an image.',
+        ],
+      },
+      { type: 'h2', id: 'measure', text: 'How to tell whether any of this worked' },
+      {
+        type: 'p',
+        text: 'You cannot read the retrieval system\u2019s mind, so measure the observable thing: fix a set of prompts a real buyer would type, check them on a schedule, and record what came back — whether you appeared, whether you were cited, and how you were described. Being described inaccurately is a finding too, and it is usually a naming problem on your own site.',
+      },
+      {
+        type: 'callout',
+        title: 'The honest caveat',
+        text: 'None of this guarantees citation. Retrieval behaviour changes without notice, answers vary between runs for the same prompt, and established, well-linked sites have an advantage that structure alone does not overcome. Structure improves your odds and removes self-inflicted problems. That is the real claim.',
+      },
+    ],
+  },
+  {
+    slug: 'seo-audit-that-produces-a-fix-list',
+    metaDescription:
+      'An audit in four passes — crawl, index, meaning, speed — that ends in an ordered fix list where every row names a URL, a change and a reason.',
+    title: 'An SEO Audit That Produces a Fix List, Not a Score',
+    excerpt:
+      'Most audits produce a number and a hundred-page PDF nobody acts on. This is a long-form walkthrough of an audit that ends in an ordered list of changes, each attached to a URL and a reason.',
+    category: 'Technical',
+    publishedAt: '2026-08-12',
+    sources: [
+      { label: 'Google Search Central — Documentation', href: 'https://developers.google.com/search/docs' },
+      {
+        label: 'Google Search Central — Introduction to robots.txt',
+        href: 'https://developers.google.com/search/docs/crawling-indexing/robots/intro',
+      },
+      { label: 'web.dev — Core Web Vitals', href: 'https://web.dev/articles/vitals' },
+    ],
+    body: [
+      {
+        type: 'lead',
+        text: 'An audit is only worth the time if somebody changes something because of it. The test of a good one is not how much it found — it is how quickly a developer can start on Monday morning.',
+      },
+      {
+        type: 'answer',
+        label: 'The short version',
+        text: 'Audit in four passes — can it be crawled, can it be indexed, does it say what it means, is it fast enough — and finish with an ordered list where every row names a URL, a change and a reason. Scores are not findings.',
+      },
+      { type: 'h2', id: 'why-scores-fail', text: 'Why scores fail' },
+      {
+        type: 'p',
+        text: 'A composite score compresses a hundred unrelated facts into one number, which makes it feel like progress and impossible to act on. Worse, it invites optimising the metric: a site can raise its score by fixing forty trivial warnings while the one template that blocks half the catalogue from being indexed stays exactly as it is. Rank the findings by consequence instead, and let the number go.',
+      },
+      { type: 'h2', id: 'pass-one', text: 'Pass one — can it be crawled?' },
+      {
+        type: 'checklist',
+        items: [
+          'robots.txt does not block anything you need fetched — including the CSS and JS the page needs to render.',
+          'Important pages are reachable by links, not only from a sitemap.',
+          'Redirect chains are collapsed to a single hop.',
+          'Faceted or parameterised URLs are not generating an unbounded crawl space.',
+          'Server responses are stable — no intermittent 5xx under crawl load.',
+        ],
+      },
+      {
+        type: 'p',
+        text: 'Crawling problems come first because everything downstream is wasted if they are unresolved. A perfectly optimized page that is never fetched is not an SEO problem in any interesting sense; it is a plumbing problem.',
+      },
+      { type: 'h2', id: 'pass-two', text: 'Pass two — can it be indexed?' },
+      {
+        type: 'ul',
+        items: [
+          'Canonicals point where you intend, and the target is itself indexable.',
+          'No page carries both a canonical to another URL and a claim to be the primary version.',
+          'noindex is present exactly where it belongs and nowhere else — a noindex left on a template after a staging launch is one of the most expensive single characters in SEO.',
+          'Near-duplicate pages are consolidated rather than left to compete with each other.',
+          'Pagination, filters and sort orders do not each produce their own indexable near-copy.',
+        ],
+      },
+      { type: 'h2', id: 'pass-three', text: 'Pass three — does the page say what it means?' },
+      {
+        type: 'p',
+        text: 'This is where most audits get vague, because it is the part that cannot be fully automated. The useful questions are specific: does the page answer the query it is supposed to own, in its own words, near the top? Does the title describe the page rather than the site? Is there one H1, and does it match what the page is about? Do the internal links pointing at this page describe it, or do they all say "learn more"?',
+      },
+      {
+        type: 'steps',
+        items: [
+          {
+            title: 'Take the query the page should own',
+            text: 'If you cannot name one, that is the finding. A page without an intended query is a page nobody planned.',
+          },
+          {
+            title: 'Read the first screen only',
+            text: 'If the query is not answered there, the fix is a rewrite of the opening, not more words at the bottom.',
+          },
+          {
+            title: 'Check the competition for coverage, not length',
+            text: 'What sub-questions do the ranking pages all answer that this one does not? Length is a symptom, not a target.',
+          },
+          {
+            title: 'Check the links in',
+            text: 'A page with no descriptive internal links is a page the rest of the site does not vouch for.',
+          },
+        ],
+      },
+      { type: 'h2', id: 'pass-four', text: 'Pass four — is it fast enough, and stable?' },
+      {
+        type: 'p',
+        text: 'Core Web Vitals — Largest Contentful Paint, Interaction to Next Paint and Cumulative Layout Shift — are worth fixing because a slow, jumpy page loses readers, and that is true independently of any ranking effect. Treat field data from real users as the source of truth and lab tools as a debugging aid; they answer different questions.',
+      },
+      {
+        type: 'callout',
+        title: 'Proportion matters',
+        text: 'Performance work is worth doing and is rarely the reason a site is invisible. If pages are not indexed, shaving 200ms off LCP changes nothing. Fix the passes in order.',
+      },
+      { type: 'h2', id: 'output', text: 'The output' },
+      {
+        type: 'p',
+        text: 'Every finding should fit one row: the URL or template affected, what to change, why it matters, and roughly how much work it is. Sort by consequence, not by category — one row that unblocks an entire template belongs above thirty missing meta descriptions, however satisfying the thirty would be to tick off.',
+      },
+      {
+        type: 'table',
+        caption: 'Illustrative format. The rows are examples of shape, not findings from any real site.',
+        head: ['Scope', 'Change', 'Why', 'Effort'],
+        rows: [
+          ['/category/* template', 'Remove noindex left from launch', 'Whole template ineligible for search', 'S'],
+          ['/blog/* ', 'Collapse two-hop redirects to one', 'Wasted crawl, slower resolution', 'S'],
+          ['12 product pages', 'Write an opening that answers the query', 'No direct answer on the first screen', 'M'],
+          ['Site-wide', 'Replace "learn more" anchors', 'Internal links describe nothing', 'M'],
+        ],
+      },
+      { type: 'h2', id: 'cadence', text: 'Then stop auditing and start watching' },
+      {
+        type: 'p',
+        text: 'A one-off audit ages from the day it is delivered. The genuinely useful shift is to run the crawl-and-index checks continuously and treat new findings as they appear, so the next audit is a short list of regressions rather than another hundred pages.',
+      },
+    ],
+  },
+  {
     slug: 'generative-engine-optimization-checklist',
+    metaDescription:
+      'A practical checklist for making existing pages usable by AI answer engines, without rewriting your site or chasing unverifiable claims.',
     title: 'A Practical GEO Checklist for Existing Content',
     excerpt:
       'Most sites do not need new pages to start appearing in AI answers — they need their existing pages to answer the question in the first paragraph. Here is the audit that finds the gap.',
@@ -167,6 +397,8 @@ const rawPosts = [
   },
   {
     slug: 'topical-authority-with-clusters',
+    metaDescription:
+      'Topical authority comes from structure, not volume: one pillar per topic, cluster pages for real sub-questions, and links that describe relationships.',
     title: 'Topical Authority Is Structure, Not Volume',
     excerpt:
       'Publishing forty posts about a topic does not create authority. A pillar, a deliberate cluster and honest internal links do — and the difference shows up in both search and AI answers.',
@@ -234,6 +466,8 @@ const rawPosts = [
   },
   {
     slug: 'measuring-ai-search-visibility',
+    metaDescription:
+      'How to measure AI search visibility honestly: a fixed prompt set, a schedule, the description recorded — and what the numbers cannot tell you.',
     title: 'How to Measure AI Search Visibility Honestly',
     excerpt:
       'There is no rank tracker for generated answers, and pretending otherwise produces confident nonsense. Here is a measurement routine that is honest about its limits and still useful.',

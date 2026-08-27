@@ -1,5 +1,5 @@
 import ProductArticle from '@/components/sections/ProductArticle';
-import CapabilitiesSection from '@/components/sections/CapabilitiesSection';
+import PipelineVisual from '@/components/visuals/PipelineVisual';
 import { aiSeoAgent } from '@/content/product';
 import { buildMetadata } from '@/lib/metadata';
 
@@ -26,9 +26,16 @@ export default function Page() {
     <ProductArticle
       doc={aiSeoAgent}
       description={description}
-      related={['/seo-automation', '/geo-optimization', '/features']}
-    >
-      <CapabilitiesSection id="agent-capabilities" />
-    </ProductArticle>
+      related={['/how-it-works', '/features', '/seo-automation']}
+      visual={
+        <PipelineVisual
+          label="Agent decision cycle"
+          note="Illustrative — depicts the decision sequence"
+          payload="State from the last run → what to do next"
+          stages={['Observe', 'Compare', 'Decide', 'Act', 'Record']}
+          output="A next action chosen from evidence, not from a schedule"
+        />
+      }
+    />
   );
 }

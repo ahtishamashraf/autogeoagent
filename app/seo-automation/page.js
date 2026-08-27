@@ -1,5 +1,6 @@
 import ProductArticle from '@/components/sections/ProductArticle';
-import WorkflowSection from '@/components/sections/WorkflowSection';
+import CapabilityIndex from '@/components/sections/CapabilityIndex';
+import AutomationQueueVisual from '@/components/visuals/AutomationQueueVisual';
 import { seoAutomation } from '@/content/product';
 import { buildMetadata } from '@/lib/metadata';
 
@@ -26,9 +27,10 @@ export default function Page() {
     <ProductArticle
       doc={seoAutomation}
       description={description}
-      related={['/geo-optimization', '/ai-seo-agent', '/how-it-works']}
+      related={['/how-it-works', '/seo-audit', '/seo-monitoring']}
+      visual={<AutomationQueueVisual />}
     >
-      <WorkflowSection id="seo-workflow" />
+      <CapabilityIndex id="automation-capabilities" />
     </ProductArticle>
   );
 }

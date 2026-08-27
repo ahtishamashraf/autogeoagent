@@ -25,7 +25,8 @@ export default function SceneProgress() {
     const root = rootRef.current;
     if (!root) return;
     const t = state.rangeIndex + clamp(state.blend);
-    const show = smoothstep(0.6, 1.05, t) * (1 - smoothstep(7.7, 8.2, t));
+    const show =
+      smoothstep(0.6, 1.05, t) * (1 - smoothstep(7.7, 8.2, t)) * (1 - state.statement);
     root.style.opacity = show.toFixed(3);
     root.style.visibility = show < 0.01 ? 'hidden' : 'visible';
 
@@ -42,7 +43,7 @@ export default function SceneProgress() {
       className="reduced-hide pointer-events-none fixed inset-x-0 bottom-0 z-30 opacity-0 xl:hidden"
     >
       <div className="mx-auto flex w-full max-w-[1600px] items-center gap-3 px-5 pb-4 sm:px-8">
-        <span className="flex items-baseline gap-2 rounded-full border border-white/10 bg-black/55 px-3 py-1.5 backdrop-blur-md">
+        <span className="flex items-baseline gap-2 rounded-full border border-white/10 bg-[#05070b] px-3 py-1.5">
           <span className="font-mono text-[9px] tracking-[0.16em] text-faint">
             {scene?.nav ?? '01'}
           </span>

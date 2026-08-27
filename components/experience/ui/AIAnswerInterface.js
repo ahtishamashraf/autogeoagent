@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, mapRange, smoothstep, stagedTime, stagger } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import { DataNote, Frame, FrameBar, StatusDot } from './primitives';
 
 /**
@@ -36,7 +37,7 @@ export default function AIAnswerInterface({ sceneIndex = 2 }) {
   const words = ANSWER.split(' ');
 
   const root = useSceneMotion(sceneIndex, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(sceneIndex));
     const visible = beat(t, 0.02, 0.24, 0.34, 0.46);
     el.style.opacity = visible.toFixed(3);
     el.style.visibility = visible < 0.01 ? 'hidden' : 'visible';
@@ -92,7 +93,7 @@ export default function AIAnswerInterface({ sceneIndex = 2 }) {
     >
       <div className="w-[min(94vw,560px)] lg:w-[min(44vw,580px)]">
         <Frame tone="raised">
-          <FrameBar title="AI answer" right={<DataNote>AI visibility simulation</DataNote>} />
+          <FrameBar title="AI answer" right={<DataNote short="Simulation">AI visibility simulation</DataNote>} />
 
           <div ref={promptRef} className="border-b border-white/8 px-4 py-3.5 opacity-0">
             <p className="flex items-start gap-2.5 text-[13px] leading-relaxed text-ink sm:text-sm">

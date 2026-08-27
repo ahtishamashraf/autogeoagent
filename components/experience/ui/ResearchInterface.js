@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, smoothstep, stagedTime, stagger } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import { DataNote, Frame, FrameBar, MetaChip } from './primitives';
 
 /**
@@ -36,7 +37,7 @@ export default function ResearchInterface({ sceneIndex = 3 }) {
   const pillarRef = useRef(null);
 
   const root = useSceneMotion(sceneIndex, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(sceneIndex));
     const visible = beat(t, -0.06, 0.22, 0.8, 1);
     el.style.opacity = visible.toFixed(3);
     el.style.visibility = visible < 0.01 ? 'hidden' : 'visible';
@@ -46,8 +47,11 @@ export default function ResearchInterface({ sceneIndex = 3 }) {
       if (!node) return;
       const appear = stagger(t, i, QUESTIONS.length, -0.04, 0.2);
       const absorb = smoothstep(0.24, 0.46, t);
+      // Fade faster than they travel: by the time their paths converge on the
+      // core they are already gone, so two questions never share a line.
+      const dim = smoothstep(0.24, 0.34, t);
       const q = QUESTIONS[i];
-      node.style.opacity = (appear * (1 - absorb)).toFixed(3);
+      node.style.opacity = (appear * (1 - dim)).toFixed(3);
       node.style.transform = `translate3d(${(q.travel[0] * absorb).toFixed(1)}px, ${(q.travel[1] * absorb).toFixed(1)}px, 0) scale(${lerp(1, 0.55, absorb) * lerp(0.8, 1, appear)})`;
       node.style.filter = `blur(${(absorb * 4).toFixed(2)}px)`;
     });
@@ -82,7 +86,7 @@ export default function ResearchInterface({ sceneIndex = 3 }) {
       ref={root}
       className="pointer-events-none absolute inset-0 flex items-start justify-center lg:items-center opacity-0"
     >
-      <div className="relative w-[min(94vw,880px)]">
+      <div className="relative w-[min(94vw,960px)]">
         {/* Questions travelling toward the agent */}
         {QUESTIONS.map((question, i) => (
           <span
@@ -97,31 +101,7 @@ export default function ResearchInterface({ sceneIndex = 3 }) {
           </span>
         ))}
 
-        {/* Node inspector */}
-        <div
-          ref={inspectorRef}
-          className="absolute right-0 top-[8%] hidden w-[min(88vw,300px)] opacity-0 lg:right-[2%] lg:block"
-        >
-          <Frame tone="deep">
-            <FrameBar title="Topic node" right={<DataNote>Sample data</DataNote>} icon={false} />
-            <div className="px-3.5 py-3">
-              <p className="font-display text-sm font-semibold tracking-[-0.02em] text-ink">
-                AI SEO Agent
-              </p>
-              <p className="mt-1 text-[11px] leading-relaxed text-faint">
-                Informational and commercial overlap. Strong internal link target for the automation
-                cluster.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                <MetaChip label="Intent" value="Commercial" tone="mid" />
-                <MetaChip label="Opportunity" value="High" tone="high" />
-                <MetaChip label="Competition" value="Medium" />
-                <MetaChip label="Cluster" value="GEO" tone="mid" />
-              </div>
-            </div>
-          </Frame>
-        </div>
-
+        <div className="grid items-center gap-4 xl:grid-cols-[minmax(0,1fr)_18rem]">
         {/* Topical map */}
         <div ref={mapRef} className="mx-auto w-[min(94vw,660px)] opacity-0">
           <Frame>
@@ -169,6 +149,30 @@ export default function ResearchInterface({ sceneIndex = 3 }) {
               </div>
             </div>
           </Frame>
+        </div>
+
+        {/* Node inspector — a column of its own where there is room for one */}
+        <div ref={inspectorRef} className="hidden opacity-0 xl:block">
+          <Frame tone="deep">
+            <FrameBar title="Topic node" right={<DataNote>Sample</DataNote>} icon={false} />
+            <div className="px-3.5 py-3">
+              <p className="font-display text-sm font-semibold tracking-[-0.02em] text-ink">
+                AI SEO Agent
+              </p>
+              <p className="mt-1 text-[11px] leading-relaxed text-faint">
+                Informational and commercial overlap. Strong internal link target for the automation
+                cluster.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                <MetaChip label="Intent" value="Commercial" tone="mid" />
+                <MetaChip label="Opportunity" value="High" tone="high" />
+                <MetaChip label="Competition" value="Medium" />
+                <MetaChip label="Cluster" value="GEO" tone="mid" />
+              </div>
+            </div>
+          </Frame>
+        </div>
+
         </div>
       </div>
     </div>

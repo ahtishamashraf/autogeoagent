@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, smoothstep, stagedTime, stagger } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import { DataNote } from './primitives';
 
 /**
@@ -21,7 +22,7 @@ const MESSAGES = [
   'Updating strategy',
 ];
 
-const RADIUS = 40; // percentage of the container
+const RADIUS = 44; // percentage of the container
 
 export default function ImproveLoop({ sceneIndex = 7 }) {
   const phaseRefs = useRef([]);
@@ -30,7 +31,7 @@ export default function ImproveLoop({ sceneIndex = 7 }) {
   const orbitRef = useRef(null);
 
   const root = useSceneMotion(sceneIndex, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(sceneIndex));
     const visible = beat(t, -0.02, 0.2, 0.82, 1);
     el.style.opacity = visible.toFixed(3);
     el.style.visibility = visible < 0.01 ? 'hidden' : 'visible';
@@ -38,15 +39,15 @@ export default function ImproveLoop({ sceneIndex = 7 }) {
     /* --- processing messages ------------------------------------- */
     messageRefs.current.forEach((node, i) => {
       if (!node) return;
-      const appear = stagger(t, i, MESSAGES.length, 0.0, 0.34);
-      const fade = smoothstep(0.42, 0.6, t);
+      const appear = stagger(t, i, MESSAGES.length, 0.0, 0.26);
+      const fade = smoothstep(0.3, 0.42, t);
       node.style.opacity = (appear * (1 - fade)).toFixed(3);
       node.style.transform = `translate3d(0, ${((1 - appear) * 12).toFixed(1)}px, 0)`;
     });
 
     /* --- the loop ------------------------------------------------- */
-    const loopIn = smoothstep(0.28, 0.56, t);
-    const spin = smoothstep(0.3, 1, t) * 72;
+    const loopIn = smoothstep(0.44, 0.62, t);
+    const spin = smoothstep(0.44, 1, t) * 72;
 
     if (orbitRef.current) {
       orbitRef.current.style.opacity = loopIn.toFixed(3);
@@ -55,7 +56,7 @@ export default function ImproveLoop({ sceneIndex = 7 }) {
 
     phaseRefs.current.forEach((node, i) => {
       if (!node) return;
-      const appear = stagger(t, i, PHASES.length, 0.3, 0.66);
+      const appear = stagger(t, i, PHASES.length, 0.46, 0.74);
       const angle = (i / PHASES.length) * 360 - 90;
       const r = lerp(RADIUS * 0.4, RADIUS, appear);
       const rad = (angle * Math.PI) / 180;
@@ -67,7 +68,7 @@ export default function ImproveLoop({ sceneIndex = 7 }) {
     });
 
     if (ringRef.current) {
-      const close = clamp(smoothstep(0.34, 0.9, t));
+      const close = clamp(smoothstep(0.48, 0.92, t));
       ringRef.current.style.strokeDashoffset = `${(1000 * (1 - close)).toFixed(1)}`;
       ringRef.current.style.opacity = loopIn.toFixed(3);
     }
@@ -76,10 +77,10 @@ export default function ImproveLoop({ sceneIndex = 7 }) {
   return (
     <div
       ref={root}
-      className="pointer-events-none absolute inset-0 flex items-start justify-center lg:items-center opacity-0"
+      className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0"
     >
       <div
-        className="relative aspect-square w-[min(66vw,620px)] sm:w-[min(84vw,620px)]"
+        className="relative aspect-square max-h-[min(84vw,620px)] w-[min(66vw,620px)] sm:w-[min(84vw,620px)]"
         style={{ containerType: 'inline-size' }}
       >
         {/* Closing loop */}

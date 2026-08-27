@@ -11,7 +11,7 @@ import { breadcrumbSchema, faqSchema, graph, webPageSchema } from '@/lib/seo';
 import { site } from '@/lib/site';
 
 /** Shared layout for the product detail pages. */
-export default function ProductArticle({ doc, related = [], description, children }) {
+export default function ProductArticle({ doc, related = [], description, visual, children }) {
   const breadcrumbs = [
     { label: 'Home', href: '/' },
     { label: 'Product', href: '/features' },
@@ -49,6 +49,12 @@ export default function ProductArticle({ doc, related = [], description, childre
           </Button>
         </div>
       </PageHero>
+
+      {visual ? (
+        <Container className="pb-16 lg:pb-20">
+          <div className="mx-auto max-w-5xl">{visual}</div>
+        </Container>
+      ) : null}
 
       <Container className="pb-20 lg:pb-28">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-16">

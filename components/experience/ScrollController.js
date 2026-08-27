@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef } fr
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
-import { scenes } from '@/lib/scene-config';
+import { scenes, statementWindows } from '@/lib/scene-config';
 import { clamp, mixHex, smoothstep } from '@/lib/animations';
 import {
   emitFrame,
@@ -14,6 +14,7 @@ import {
   staticExperience,
 } from '@/lib/experience-store';
 import { usePrefersReducedMotion, useQualityTier } from '@/lib/hooks';
+import { getSmoothScroll, registerSmoothScroll } from '@/lib/smooth-scroll';
 
 const ExperienceContext = createContext({
   scrollToScene: () => {},
@@ -63,6 +64,22 @@ export default function ScrollController({ wrapperRef, children }) {
     }
     b[SCENE_COUNT] = wrapperTop + wrapper.offsetHeight - vh;
 
+    // Reserve the vertical band the scene headings occupy, measured rather than
+    // guessed, so a floating interface can never be laid out underneath a
+    // heading. Scenes differ in copy length; the tallest one wins so the
+    // interfaces never shift between scenes.
+    let band = 0;
+    wrapper.querySelectorAll('[data-copy-band]').forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const offsetTop = parseFloat(getComputedStyle(el.closest('.story-hold') || el).paddingTop) || 0;
+      band = Math.max(band, offsetTop + rect.height);
+    });
+    if (band > 0) {
+      const gap = vh * 0.05;
+      const clamped = Math.min(Math.max(band + gap, vh * 0.24), vh * 0.55);
+      document.documentElement.style.setProperty('--scene-band', `${Math.round(clamped)}px`);
+    }
+
     // Guarantee a strictly increasing, gap-free timeline even if a browser
     // reports odd sub-pixel geometry.
     for (let i = 1; i <= SCENE_COUNT; i += 1) {
@@ -107,6 +124,20 @@ export default function ScrollController({ wrapperRef, children }) {
 
       experienceState.rangeIndex = index;
       experienceState.blend = clamp(local[index]);
+
+      // Full-screen statements take the frame; chrome fades out for them.
+      let statement = 0;
+      for (let i = 0; i < statementWindows.length; i += 1) {
+        const w = statementWindows[i];
+        const t = local[w.scene];
+        if (t > w.from && t < w.to) {
+          statement = Math.max(
+            statement,
+            smoothstep(w.from, w.from + 0.06, t) * (1 - smoothstep(w.to - 0.08, w.to, t)),
+          );
+        }
+      }
+      experienceState.statement = statement;
       experienceState.story = (index + experienceState.blend) / SCENE_COUNT;
 
       if (navIndex !== experienceState.sceneIndex) {
@@ -155,8 +186,15 @@ export default function ScrollController({ wrapperRef, children }) {
       return undefined;
     }
 
+    // React Strict Mode mounts effects twice in development. A second smooth
+    // scroller would mean two rAF loops fighting over the same scroll position,
+    // so refuse to start one.
+    if (getSmoothScroll()) return undefined;
+
     document.documentElement.dataset.motion = 'full';
     gsap.registerPlugin(ScrollTrigger);
+    // Long frames must not be smoothed away: scroll-driven animation has to
+    // track the real scroll position, not a interpolated one.
     gsap.ticker.lagSmoothing(0);
 
     const lenis = new Lenis({
@@ -170,6 +208,9 @@ export default function ScrollController({ wrapperRef, children }) {
       autoRaf: false,
     });
     lenisRef.current = lenis;
+    // Publish the instance so route changes and anchor links use this one
+    // scroll system rather than starting a competing one.
+    const unregisterSmoothScroll = registerSmoothScroll(lenis);
     document.documentElement.classList.add('lenis');
 
     const onLenisScroll = () => ScrollTrigger.update();
@@ -225,7 +266,9 @@ export default function ScrollController({ wrapperRef, children }) {
       gsap.ticker.remove(tick);
       gsap.ticker.remove(raf);
       trigger.kill();
+      gsap.ticker.lagSmoothing(500, 33);
       lenis.off('scroll', onLenisScroll);
+      unregisterSmoothScroll();
       lenis.destroy();
       lenisRef.current = null;
       document.documentElement.classList.remove('lenis');

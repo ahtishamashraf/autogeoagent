@@ -1,8 +1,6 @@
 import PageHero from '@/components/sections/PageHero';
 import CapabilitiesSection from '@/components/sections/CapabilitiesSection';
-import WorkflowSection from '@/components/sections/WorkflowSection';
-import SeoGeoSection from '@/components/sections/SeoGeoSection';
-import UseCasesSection from '@/components/sections/UseCasesSection';
+import CapabilityIndex from '@/components/sections/CapabilityIndex';
 import RelatedLinks from '@/components/sections/RelatedLinks';
 import CtaSection from '@/components/sections/CtaSection';
 import Button from '@/components/ui/Button';
@@ -64,10 +62,11 @@ export default function Page() {
       </PageHero>
 
       <CapabilitiesSection />
-      <WorkflowSection detailed />
-      <SeoGeoSection />
-      <UseCasesSection />
-      <RelatedLinks paths={['/seo-automation', '/geo-optimization', '/ai-seo-agent']} />
+      <CapabilityIndex />
+      <RelatedLinks
+        paths={['/how-it-works', '/seo-automation', '/geo-optimization']}
+        title="Where these fit together"
+      />
       <CtaSection id="features-cta" />
     </>
   );

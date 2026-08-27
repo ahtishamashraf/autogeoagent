@@ -1,8 +1,9 @@
 import { routes } from '@/lib/routes';
 import { posts } from '@/content/blog/posts';
-import { stages } from '@/content/story';
+import { loopStages } from '@/content/how-it-works';
 import { capabilities, useCases } from '@/content/capabilities';
 import { homeFaqs } from '@/content/faqs';
+import { glossaryTerms } from '@/content/resources/glossary';
 import { comparisonRows } from '@/components/sections/SeoGeoSection';
 import { pricing } from '@/lib/pricing';
 import { absoluteUrl, site } from '@/lib/site';
@@ -41,11 +42,15 @@ export function GET() {
   );
 
   push('## The workflow', '');
-  stages.forEach((stage) => {
-    push(`### ${stage.number} — ${stage.heading} (${stage.label})`, '');
-    push(stage.long, '');
+  push(
+    'Eight stages that run as a loop: the output of the last stage is the input to the first.',
+    '',
+  );
+  loopStages.forEach((stage) => {
+    push(`### ${stage.number} — ${stage.label}: ${stage.heading}`, '');
+    push(stage.detail, '');
     stage.points.forEach((point) => push(`- ${point}`));
-    push('');
+    push(`- Output: ${stage.output}`, '');
   });
 
   push('## Capabilities', '');
@@ -82,6 +87,12 @@ export function GET() {
   homeFaqs.forEach((faq) => {
     push(`### ${faq.question}`, '', faq.answer, '');
   });
+
+  push('## Glossary', '');
+  glossaryTerms.forEach((entry) => {
+    push(`- **${entry.term}** (${entry.group}): ${entry.definition}`);
+  });
+  push('');
 
   push('## Pages', '');
   routes.forEach((route) => push(`- [${route.title}](${absoluteUrl(route.path)}): ${route.summary}`));

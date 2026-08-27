@@ -37,6 +37,10 @@
   --scene-glow: #7ec8ff;
   --scene-bg: #05070b;
   --header-h: 4.5rem;
+  /* Vertical band reserved for scene headings; measured at runtime. */
+  --scene-band: 30svh;
+  /* Centre of the area left for the interfaces, below that band. */
+  --scene-band-center: calc(var(--scene-band) + (100svh - var(--scene-band)) / 2);
 }
 
 /* ================================================================== */
@@ -140,6 +144,9 @@
     line-height: 0.88;
     letter-spacing: -0.055em;
     font-weight: 600;
+    /* A line-height under 1 lets ascenders overflow the box; reserve the space
+       so cinematic type can never touch whatever sits above it. */
+    padding-top: 0.09em;
     /* Separates full-screen type from the agent behind it */
     text-shadow: 0 4px 70px rgba(3, 5, 9, 0.9);
   }
@@ -468,6 +475,13 @@
     .story-hold {
       align-items: flex-start;
       padding-top: calc(var(--header-h) + 1.25rem);
+    }
+  }
+
+  /* The compact scene readout is pinned to the bottom below xl. */
+  @media (max-width: 1279px) {
+    .story-hold {
+      padding-bottom: 8svh;
     }
   }
 }

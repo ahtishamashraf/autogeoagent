@@ -46,8 +46,13 @@ export function FrameBar({ title, right, icon = true }) {
   );
 }
 
-/** Honesty label used on every simulated interface. */
-export function DataNote({ children = 'Product visualization', className }) {
+/**
+ * Honesty label used on every simulated interface.
+ *
+ * `short` is shown where the frame is too narrow for the full wording, so the
+ * label is never dropped and never collides with a panel title.
+ */
+export function DataNote({ children = 'Product visualization', short, className }) {
   return (
     <span
       className={cn(
@@ -55,8 +60,15 @@ export function DataNote({ children = 'Product visualization', className }) {
         className,
       )}
     >
-      <span aria-hidden="true" className="size-1 rounded-full bg-current" />
-      {children}
+      <span aria-hidden="true" className="size-1 shrink-0 rounded-full bg-current" />
+      {short ? (
+        <>
+          <span className="sm:hidden">{short}</span>
+          <span className="hidden sm:inline">{children}</span>
+        </>
+      ) : (
+        children
+      )}
     </span>
   );
 }

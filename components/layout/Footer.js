@@ -1,32 +1,30 @@
 import Link from 'next/link';
 import Container from '@/components/ui/Container';
 import Logo from '@/components/ui/Logo';
+import Button from '@/components/ui/Button';
 import { navigation } from '@/lib/routes';
 import { site } from '@/lib/site';
 
 const columns = [
   {
-    title: 'Product',
-    links: [
-      { label: 'Features', href: '/features' },
-      { label: 'SEO Automation', href: '/seo-automation' },
-      { label: 'GEO Optimization', href: '/geo-optimization' },
-      { label: 'AI SEO Agent', href: '/ai-seo-agent' },
-      { label: 'How It Works', href: '/how-it-works' },
-      { label: 'Pricing', href: '/pricing' },
-    ],
+    title: 'Platform',
+    links: [...navigation.product, { label: 'Pricing', href: '/pricing' }],
+  },
+  {
+    title: 'Capabilities',
+    links: navigation.capabilities,
+  },
+  {
+    title: 'Solutions',
+    links: navigation.solutions,
   },
   {
     title: 'Learn',
-    links: navigation.resources,
+    links: [...navigation.resources, ...navigation.aiSearch],
   },
   {
     title: 'Company',
-    links: navigation.company,
-  },
-  {
-    title: 'Legal',
-    links: navigation.legal,
+    links: [...navigation.company, ...navigation.legal],
   },
 ];
 
@@ -40,7 +38,7 @@ export default function Footer() {
         className="pointer-events-none absolute inset-x-0 -top-40 h-80 opacity-50 [background:radial-gradient(60%_100%_at_50%_100%,color-mix(in_srgb,var(--scene-accent)_22%,transparent),transparent_70%)]"
       />
       <Container className="relative py-16 lg:py-20">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_2.7fr]">
+        <div className="grid gap-12 lg:grid-cols-[1fr_3.2fr]">
           <div>
             <Link href="/" aria-label={`${site.name} home`}>
               <Logo markClassName="size-8" />
@@ -50,16 +48,16 @@ export default function Footer() {
               publish and keep improving your search visibility.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              <a href={site.app.signup} rel="noopener" className="btn btn-primary btn-sm">
+              <Button href={site.app.signup} size="sm" magnetic={false}>
                 Create Account
-              </a>
-              <a href={site.app.login} rel="noopener" className="btn btn-secondary btn-sm">
+              </Button>
+              <Button href={site.app.login} variant="secondary" size="sm" magnetic={false}>
                 Login
-              </a>
+              </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
             {columns.map((column) => (
               <nav key={column.title} aria-label={column.title}>
                 <p className="t-micro mb-4 text-faint">{column.title}</p>

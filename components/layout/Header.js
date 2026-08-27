@@ -11,16 +11,70 @@ import { site } from '@/lib/site';
 import { cn } from '@/lib/cn';
 import { useScrolledPast } from '@/lib/hooks';
 
+/**
+ * Primary navigation.
+ *
+ * Menus with `columns` open as a viewport-centred mega panel — centring on the
+ * viewport rather than the trigger means a wide panel can never be pushed off
+ * a narrow laptop screen. Menus with `href` are plain links.
+ */
 const menus = [
-  { id: 'product', label: 'Product', items: navigation.product },
-  { id: 'seo', label: 'SEO', href: '/seo-automation' },
-  { id: 'geo', label: 'GEO', href: '/geo-optimization' },
-  { id: 'how', label: 'How It Works', href: '/how-it-works' },
+  {
+    id: 'product',
+    label: 'Product',
+    width: 'w-[min(52rem,calc(100vw-3rem))]',
+    columns: [
+      { title: 'Platform', items: navigation.product },
+      { title: 'Capabilities', items: navigation.capabilities },
+    ],
+    footer: {
+      text: 'One agent runs the whole loop — research, creation, optimization and monitoring.',
+      link: { label: 'See how it works', href: '/how-it-works' },
+    },
+  },
+  {
+    id: 'solutions',
+    label: 'Solutions',
+    width: 'w-[min(24rem,calc(100vw-3rem))]',
+    columns: [{ title: 'By business type', items: navigation.solutions }],
+  },
+  {
+    id: 'resources',
+    label: 'Resources',
+    width: 'w-[min(46rem,calc(100vw-3rem))]',
+    columns: [
+      { title: 'Learn', items: navigation.resources },
+      { title: 'AI search', items: navigation.aiSearch },
+    ],
+    footer: {
+      text: 'Guides, definitions and reference material, organised in one place.',
+      link: { label: 'Browse all resources', href: '/resources' },
+    },
+  },
   { id: 'pricing', label: 'Pricing', href: '/pricing' },
-  { id: 'resources', label: 'Resources', items: navigation.resources },
 ];
 
-function Dropdown({ menu, open, onOpen, onClose, pathname }) {
+function MenuLink({ item, pathname, onClose, tabbable }) {
+  return (
+    <li>
+      <Link
+        href={item.href}
+        onClick={onClose}
+        tabIndex={tabbable ? 0 : -1}
+        className={cn(
+          'block rounded-[9px] px-3 py-2 text-sm transition-colors duration-200',
+          pathname === item.href
+            ? 'bg-white/[0.06] text-ink'
+            : 'text-muted hover:bg-white/[0.05] hover:text-ink',
+        )}
+      >
+        {item.label}
+      </Link>
+    </li>
+  );
+}
+
+function MegaMenu({ menu, open, onOpen, onClose, pathname }) {
   const timer = useRef(0);
 
   const scheduleClose = () => {
@@ -33,7 +87,6 @@ function Dropdown({ menu, open, onOpen, onClose, pathname }) {
 
   return (
     <li
-      className="relative"
       onMouseEnter={() => {
         cancelClose();
         onOpen();
@@ -44,6 +97,7 @@ function Dropdown({ menu, open, onOpen, onClose, pathname }) {
         type="button"
         aria-expanded={open}
         aria-haspopup="true"
+        aria-controls={`menu-${menu.id}`}
         onClick={() => (open ? onClose() : onOpen())}
         onFocus={onOpen}
         className={cn(
@@ -62,37 +116,54 @@ function Dropdown({ menu, open, onOpen, onClose, pathname }) {
       </button>
 
       <div
+        id={`menu-${menu.id}`}
         className={cn(
-          'absolute left-1/2 top-full w-64 -translate-x-1/2 pt-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          'fixed left-1/2 top-[var(--header-h)] -translate-x-1/2 pt-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          menu.width,
           open ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-1 opacity-0',
         )}
         onMouseEnter={cancelClose}
         onMouseLeave={scheduleClose}
       >
-        <ul className="panel overflow-hidden p-1.5" role="menu">
-          {menu.items.map((item) => (
-            <li key={item.href} role="none">
+        <div className="panel overflow-hidden">
+          <div
+            className={cn(
+              'grid gap-x-6 gap-y-6 p-4',
+              menu.columns.length > 1 && 'sm:grid-cols-2',
+            )}
+          >
+            {menu.columns.map((column) => (
+              <div key={column.title}>
+                <p className="t-micro mb-2 px-3 text-faint">{column.title}</p>
+                <ul>
+                  {column.items.map((item) => (
+                    <MenuLink
+                      key={item.href}
+                      item={item}
+                      pathname={pathname}
+                      onClose={onClose}
+                      tabbable={open}
+                    />
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {menu.footer ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/8 bg-white/[0.02] px-7 py-4">
+              <p className="max-w-md text-xs leading-relaxed text-faint">{menu.footer.text}</p>
               <Link
-                role="menuitem"
-                href={item.href}
+                href={menu.footer.link.href}
                 onClick={onClose}
                 tabIndex={open ? 0 : -1}
-                className={cn(
-                  'flex items-center justify-between gap-3 rounded-[9px] px-3 py-2.5 text-sm transition-colors duration-200',
-                  pathname === item.href
-                    ? 'bg-white/[0.06] text-ink'
-                    : 'text-muted hover:bg-white/[0.05] hover:text-ink',
-                )}
+                className="link-underline text-xs text-ink-soft transition-colors hover:text-ink"
               >
-                {item.label}
-                <span
-                  aria-hidden="true"
-                  className="size-1 rounded-full bg-[var(--scene-glow)] opacity-0 transition-opacity duration-200 group-hover:opacity-100"
-                />
+                {menu.footer.link.label}
               </Link>
-            </li>
-          ))}
-        </ul>
+            </div>
+          ) : null}
+        </div>
       </div>
     </li>
   );
@@ -124,7 +195,7 @@ export default function Header() {
     <header
       className={cn(
         'fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500',
-        scrolled ? 'glass-header' : 'border-b border-transparent bg-transparent',
+        scrolled || openMenu ? 'glass-header' : 'border-b border-transparent bg-transparent',
       )}
     >
       <a
@@ -142,8 +213,8 @@ export default function Header() {
         <nav aria-label="Primary" className="hidden lg:block">
           <ul className="flex items-center gap-0.5">
             {menus.map((menu) =>
-              menu.items ? (
-                <Dropdown
+              menu.columns ? (
+                <MegaMenu
                   key={menu.id}
                   menu={menu}
                   pathname={pathname}
@@ -155,6 +226,7 @@ export default function Header() {
                 <li key={menu.id}>
                   <Link
                     href={menu.href}
+                    onMouseEnter={close}
                     className={cn(
                       'block rounded-full px-3 py-2 text-sm transition-colors duration-300',
                       pathname === menu.href ? 'text-ink' : 'text-muted hover:text-ink',

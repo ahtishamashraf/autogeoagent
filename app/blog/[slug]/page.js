@@ -22,7 +22,7 @@ export async function generateMetadata({ params }) {
 
   return buildMetadata({
     title: post.title,
-    description: post.excerpt,
+    description: post.metaDescription || post.excerpt,
     path: `/blog/${post.slug}`,
     ogKicker: post.category,
     type: 'article',
@@ -92,6 +92,31 @@ export default async function Page({ params }) {
           <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-16">
             <div>
               <ArticleBody blocks={post.body} />
+
+              {post.sources?.length ? (
+                <section aria-labelledby="sources-heading" className="mt-14 border-t border-white/8 pt-8">
+                  <h2 id="sources-heading" className="t-micro text-faint">
+                    References
+                  </h2>
+                  <p className="t-body mt-3 text-[0.9rem]">
+                    Primary documentation referred to while writing this article. Links point to the
+                    publisher, not to a summary of it.
+                  </p>
+                  <ul className="mt-5 space-y-2.5">
+                    {post.sources.map((source) => (
+                      <li key={source.href}>
+                        <a
+                          href={source.href}
+                          rel="noopener nofollow"
+                          className="link-underline text-[0.9rem] text-muted transition-colors hover:text-ink"
+                        >
+                          {source.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
             </div>
             <aside className="order-first lg:order-last">
               <TableOfContents blocks={post.body} title="Contents" />

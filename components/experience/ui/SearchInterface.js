@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, mapRange, smoothstep, stagedTime, stagger } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import { DataNote, Frame, FrameBar } from './primitives';
 
 /**
@@ -28,11 +29,11 @@ const RANKS = ['#18', '#11', '#7', '#4'];
 /* Base placement is expressed in container percentages; the gather motion is
    applied as a pixel transform so the two never fight each other. */
 const KEYWORDS = [
-  { label: 'AI SEO agent', left: -14, top: 6, gather: [86, 62] },
-  { label: 'automated SEO', left: -22, top: 42, gather: [104, 22] },
-  { label: 'SEO automation', left: -12, top: 82, gather: [80, -46] },
-  { label: 'AI content optimization', left: 76, top: -8, gather: [-70, 78] },
-  { label: 'search visibility', left: 82, top: 92, gather: [-80, -66] },
+  { label: 'AI SEO agent', top: 4, offset: 34, gather: [96, 74] },
+  { label: 'automated SEO', top: 28, offset: 96, gather: [120, 40] },
+  { label: 'SEO automation', top: 54, offset: 52, gather: [104, -18] },
+  { label: 'AI content optimization', top: 78, offset: 118, gather: [136, -60] },
+  { label: 'search visibility', top: 98, offset: 26, gather: [92, -96] },
 ];
 
 export default function SearchInterface({ sceneIndex = 1 }) {
@@ -46,7 +47,7 @@ export default function SearchInterface({ sceneIndex = 1 }) {
   const offsets = useRef(null);
 
   const root = useSceneMotion(sceneIndex, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(sceneIndex));
     const visible = beat(t, 0.02, 0.34, 0.76, 0.99);
     el.style.opacity = visible.toFixed(3);
     el.style.visibility = visible < 0.01 ? 'hidden' : 'visible';
@@ -88,7 +89,9 @@ export default function SearchInterface({ sceneIndex = 1 }) {
 
     rowRefs.current.forEach((row, i) => {
       if (!row) return;
-      const pushed = i + smoothstep(i + 1, i, ownerSlot);
+      // A tight window means a row is either above or below the climbing
+      // result, never sharing its line for long enough to read as overlap.
+      const pushed = i + smoothstep(i + 0.62, i + 0.18, ownerSlot);
       row.style.transform = `translate3d(0, calc(${pushed} * var(--row-h)), 0)`;
       row.style.opacity = (0.32 + stagger(t, i, RESULTS.length, 0.28, 0.5) * 0.5).toFixed(3);
     });
@@ -129,15 +132,15 @@ export default function SearchInterface({ sceneIndex = 1 }) {
             ref={(el) => {
               keywordRefs.current[i] = el;
             }}
-            style={{ left: `${keyword.left}%`, top: `${keyword.top}%` }}
-            className="absolute hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full border border-white/12 bg-[#080d16]/80 px-2.5 py-1 font-mono text-[10px] tracking-[0.08em] text-ink-soft opacity-0 backdrop-blur-md xl:block"
+            style={{ top: `${keyword.top}%`, right: '100%', marginRight: `${keyword.offset}px` }}
+            className="absolute hidden -translate-y-1/2 whitespace-nowrap rounded-full border border-white/12 bg-[#080d16]/80 px-2.5 py-1 font-mono text-[10px] tracking-[0.08em] text-ink-soft opacity-0 backdrop-blur-md 2xl:block"
           >
             {keyword.label}
           </span>
         ))}
 
         <Frame className="relative">
-          <FrameBar title="Search results" right={<DataNote>Product visualization</DataNote>} />
+          <FrameBar title="Search results" right={<DataNote short="Sample">Product visualization</DataNote>} />
 
           {/* Query bar */}
           <div className="flex items-center gap-3 border-b border-white/8 px-4 py-3.5">
@@ -197,11 +200,15 @@ export default function SearchInterface({ sceneIndex = 1 }) {
             {/* The optimised result */}
             <div
               ref={ownerRef}
-              className="absolute inset-x-3 top-3 flex h-[var(--row-h)] items-start gap-3 rounded-lg border px-2.5 py-2 opacity-0"
+              className="absolute inset-x-3 top-3 z-10 flex h-[var(--row-h)] items-start gap-3 rounded-lg border px-2.5 py-2 opacity-0"
               style={{
-                borderColor: 'color-mix(in srgb, var(--scene-glow) calc(28% + var(--lift, 0) * 42%), transparent)',
+                backgroundColor: '#0a1019',
+                borderColor:
+                  'color-mix(in srgb, var(--scene-glow) calc(28% + var(--lift, 0) * 42%), transparent)',
+                // Opaque: the climbing result passes over the others, so it must
+                // never let their text show through.
                 background:
-                  'linear-gradient(100deg, color-mix(in srgb, var(--scene-accent) calc(6% + var(--lift, 0) * 12%), transparent), transparent 70%)',
+                  'linear-gradient(100deg, color-mix(in srgb, var(--scene-accent) calc(10% + var(--lift, 0) * 12%), #0a1019) 0%, #0a1019 70%)',
                 boxShadow: '0 0 0 1px rgba(255,255,255,0.02) inset',
               }}
             >

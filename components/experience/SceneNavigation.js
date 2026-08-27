@@ -28,7 +28,8 @@ export default function SceneNavigation() {
     if (!root) return;
     const t = state.rangeIndex + clamp(state.blend);
     // Appears as the hero hands over, leaves before the closing sequence.
-    const show = smoothstep(0.55, 1.05, t) * (1 - smoothstep(7.75, 8.25, t));
+    const show =
+      smoothstep(0.55, 1.05, t) * (1 - smoothstep(7.75, 8.25, t)) * (1 - state.statement);
     root.style.opacity = show.toFixed(3);
     root.style.visibility = show < 0.01 ? 'hidden' : 'visible';
     root.style.transform = `translate3d(${((1 - show) * -20).toFixed(1)}px, -50%, 0)`;

@@ -159,7 +159,11 @@ function Block({ block }) {
       return (
         <div className="-mx-5 mt-8 overflow-x-auto px-5 sm:mx-0 sm:px-0">
           <table className="w-full min-w-[34rem] border-collapse text-left">
-            {block.caption ? <caption className="sr-only">{block.caption}</caption> : null}
+            {block.caption ? (
+              <caption className="caption-bottom pt-4 text-left text-xs leading-relaxed text-faint">
+                {block.caption}
+              </caption>
+            ) : null}
             <thead>
               <tr className="border-b border-white/12">
                 {block.head.map((cell) => (

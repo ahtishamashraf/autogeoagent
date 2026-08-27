@@ -7,12 +7,16 @@ import { navigation } from '@/lib/routes';
 import { site } from '@/lib/site';
 import { cn } from '@/lib/cn';
 import { Close, Menu } from '@/components/ui/Icons';
+import { appLinkEvent, track } from '@/lib/analytics';
 import Logo from '@/components/ui/Logo';
 
 const groups = [
-  { title: 'Product', items: navigation.product },
+  { title: 'Product', items: [...navigation.product, { label: 'Pricing', href: '/pricing' }] },
+  { title: 'Capabilities', items: navigation.capabilities },
+  { title: 'Solutions', items: navigation.solutions },
   { title: 'Learn', items: navigation.resources },
-  { title: 'Company', items: [...navigation.company, { label: 'Pricing', href: '/pricing' }] },
+  { title: 'AI search', items: navigation.aiSearch },
+  { title: 'Company', items: [...navigation.company, ...navigation.legal] },
 ];
 
 export default function MobileNavigation() {
@@ -122,10 +126,24 @@ export default function MobileNavigation() {
           </div>
 
           <nav aria-label="Mobile" className="mt-2 px-5">
-            {groups.map((group) => (
-              <div key={group.title} className="border-t border-white/8 py-5">
-                <p className="t-micro mb-3 text-faint">{group.title}</p>
-                <ul className="space-y-0.5">
+            {groups.map((group, index) => (
+              <details
+                key={group.title}
+                name="mobile-nav"
+                open={index === 0}
+                className="group/acc border-t border-white/8"
+              >
+                {/* Layout lives on a child of <summary>: overriding a summary's
+                    display stops the browser hiding the disclosure content. */}
+                <summary className="cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                  <div className="flex items-center justify-between gap-4 py-4">
+                    <span className="t-micro text-faint group-open/acc:text-ink-soft">{group.title}</span>
+                    <svg viewBox="0 0 10 10" aria-hidden="true" className="size-2.5 text-faint transition-transform duration-300 group-open/acc:rotate-180">
+                      <path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                </summary>
+                <ul className="space-y-0.5 pb-5">
                   {group.items.map((item) => (
                     <li key={item.href}>
                       <Link
@@ -140,14 +158,24 @@ export default function MobileNavigation() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </details>
             ))}
 
             <div className="mt-6 grid gap-3">
-              <a href={site.app.signup} rel="noopener" className="btn btn-primary btn-lg w-full">
+              <a
+                href={site.app.signup}
+                rel="noopener"
+                onClick={() => track(appLinkEvent(site.app.signup), { location: 'mobile_nav' })}
+                className="btn btn-primary btn-lg w-full"
+              >
                 Get Started
               </a>
-              <a href={site.app.login} rel="noopener" className="btn btn-secondary btn-lg w-full">
+              <a
+                href={site.app.login}
+                rel="noopener"
+                onClick={() => track(appLinkEvent(site.app.login), { location: 'mobile_nav' })}
+                className="btn btn-secondary btn-lg w-full"
+              >
                 Login
               </a>
             </div>

@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, smoothstep, stagedTime, stagger } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import { Check } from '@/components/ui/Icons';
 import { DataNote, Frame, FrameBar } from './primitives';
 
@@ -31,7 +32,7 @@ export default function ContentEditor({ sceneIndex = 4 }) {
   const progressRef = useRef(null);
 
   const root = useSceneMotion(sceneIndex, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(sceneIndex));
     const visible = beat(t, 0.0, 0.26, 0.78, 0.98);
     el.style.opacity = visible.toFixed(3);
     el.style.visibility = visible < 0.01 ? 'hidden' : 'visible';
@@ -116,7 +117,7 @@ export default function ContentEditor({ sceneIndex = 4 }) {
         <Frame tone="raised" className="overflow-hidden">
           <FrameBar
             title="Draft — ai-seo-automation"
-            right={<DataNote>Product visualization</DataNote>}
+            right={<DataNote short="Sample">Product visualization</DataNote>}
           />
           <div className="relative h-[38svh] overflow-hidden px-5 py-5 sm:px-7 lg:h-[50svh]">
             <div ref={editorRef} className="space-y-3.5">

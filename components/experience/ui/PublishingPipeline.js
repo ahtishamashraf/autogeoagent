@@ -3,6 +3,7 @@
 import { useRef } from 'react';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, mapRange, smoothstep, stagedTime, stagger } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import { Check } from '@/components/ui/Icons';
 import { DataNote, Frame, FrameBar, SkeletonLine } from './primitives';
 
@@ -29,7 +30,7 @@ export default function PublishingPipeline({ sceneIndex = 5 }) {
   const contentRefs = useRef([]);
 
   const root = useSceneMotion(sceneIndex, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(sceneIndex));
     const visible = beat(t, -0.02, 0.24, 0.8, 1);
     el.style.opacity = visible.toFixed(3);
     el.style.visibility = visible < 0.01 ? 'hidden' : 'visible';

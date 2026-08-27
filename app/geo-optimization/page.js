@@ -1,5 +1,5 @@
 import ProductArticle from '@/components/sections/ProductArticle';
-import SeoGeoSection from '@/components/sections/SeoGeoSection';
+import AnswerAssemblyVisual from '@/components/visuals/AnswerAssemblyVisual';
 import { geoOptimization } from '@/content/product';
 import { buildMetadata } from '@/lib/metadata';
 
@@ -26,9 +26,8 @@ export default function Page() {
     <ProductArticle
       doc={geoOptimization}
       description={description}
-      related={['/what-is-geo', '/ai-search-optimization', '/seo-automation']}
-    >
-      <SeoGeoSection id="geo-comparison" />
-    </ProductArticle>
+      related={['/what-is-geo', '/ai-visibility-tracking', '/ai-search-optimization']}
+      visual={<AnswerAssemblyVisual />}
+    />
   );
 }

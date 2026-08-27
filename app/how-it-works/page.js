@@ -1,51 +1,34 @@
 import Container from '@/components/ui/Container';
 import PageHero from '@/components/sections/PageHero';
-import WorkflowSection from '@/components/sections/WorkflowSection';
+import LoopWalkthrough from '@/components/sections/LoopWalkthrough';
 import RelatedLinks from '@/components/sections/RelatedLinks';
 import CtaSection from '@/components/sections/CtaSection';
 import FaqSection from '@/components/sections/FaqSection';
 import Button from '@/components/ui/Button';
 import JsonLd from '@/components/seo/JsonLd';
 import { buildMetadata } from '@/lib/metadata';
-import { breadcrumbSchema, graph, howToSchema, webPageSchema } from '@/lib/seo';
-import { stages } from '@/content/story';
+import { breadcrumbSchema, faqSchema, graph, howToSchema, webPageSchema } from '@/lib/seo';
+import { loopFaqs, loopStages } from '@/content/how-it-works';
 import { site } from '@/lib/site';
 
 const description =
-  'The seven stages of the GetGeoAgent loop — research, strategy, creation, publishing, monitoring, improvement and repeat — explained step by step.';
+  'The eight stages of the GetGeoAgent loop — discover, understand, plan, create, optimize, publish, measure, improve — and how the last one feeds the first.';
 
 export const metadata = buildMetadata({
   title: 'How It Works',
   description,
   path: '/how-it-works',
   ogKicker: 'Workflow',
-  keywords: ['how AI SEO works', 'SEO workflow', 'AI SEO agent workflow', 'SEO automation process'],
+  keywords: [
+    'how AI SEO works',
+    'SEO workflow',
+    'AI SEO agent workflow',
+    'SEO automation process',
+    'GEO workflow',
+  ],
 });
 
 const breadcrumbs = [{ label: 'Home', href: '/' }, { label: 'How It Works' }];
-
-const faqs = [
-  {
-    question: 'How long does a full cycle take?',
-    answer:
-      'Cycle length depends on the scope of your programme — how many topics the agent covers and how much content it produces. Research and monitoring run continuously; content cycles run on a cadence you configure in the application.',
-  },
-  {
-    question: 'Where does the agent get its research from?',
-    answer:
-      'It builds a topic model from the queries and questions in your market, the pages already on your site, and the performance data that comes back after publishing. Each cycle refines that model.',
-  },
-  {
-    question: 'Can I intervene at any stage?',
-    answer:
-      'Yes. The plan, the briefs and the drafts are all reviewable, and nothing publishes without approval.',
-  },
-  {
-    question: 'Does the loop cover GEO as well as SEO?',
-    answer:
-      'Yes — they run as one workflow. The same topic model and content structure serve both ranking in search results and being usable inside AI-generated answers.',
-  },
-];
 
 export default function Page() {
   return (
@@ -64,60 +47,61 @@ export default function Page() {
             name: 'How GetGeoAgent improves search and AI visibility',
             description,
             path: '/how-it-works',
-            steps: stages.map((stage) => ({ name: stage.heading, text: stage.long })),
+            steps: loopStages.map((stage) => ({ name: stage.heading, text: stage.detail })),
           }),
+          faqSchema(loopFaqs, '/how-it-works'),
         ])}
       />
 
       <PageHero
         eyebrow="Workflow"
         title="A loop that does not stop between campaigns"
-        lead="Seven stages, each feeding the next. The last one feeds the first, which is what makes the strategy improve instead of expire."
+        lead="Eight stages, each feeding the next. The eighth feeds the first, which is the difference between a strategy that improves and one that expires."
         breadcrumbs={breadcrumbs}
       >
         <div className="mt-9 flex flex-wrap gap-3">
           <Button href={site.app.signup} size="lg" withArrow>
-            Start Growing
+            Start Free
           </Button>
           <Button href="/features" variant="secondary" size="lg" magnetic={false}>
             See all features
           </Button>
         </div>
+
+        <nav aria-label="Stages" className="mt-10 flex flex-wrap gap-2">
+          {loopStages.map((stage) => (
+            <a
+              key={stage.id}
+              href={`#${stage.id}`}
+              className="rounded-full border border-white/12 bg-white/[0.03] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-muted transition-colors hover:border-white/25 hover:text-ink"
+            >
+              {stage.number} {stage.label}
+            </a>
+          ))}
+        </nav>
       </PageHero>
 
-      <Container className="pb-8">
-        <ol className="border-t border-white/8">
-          {stages.map((stage) => (
-            <li
-              key={stage.id}
-              id={stage.id}
-              className="grid scroll-mt-28 gap-x-10 gap-y-4 border-b border-white/8 py-10 lg:grid-cols-[7rem_minmax(0,1fr)_minmax(0,20rem)] lg:py-12"
-            >
-              <p className="font-mono text-[11px] tracking-[0.16em] text-faint">
-                {stage.number} / {stage.label}
-              </p>
-              <div>
-                <h2 className="t-h3 text-ink">{stage.heading}</h2>
-                <p className="t-body mt-4 max-w-xl">{stage.long}</p>
-              </div>
-              <ul className="space-y-2 lg:pt-2">
-                {stage.points.map((point) => (
-                  <li key={point} className="flex gap-2.5 text-[13.5px] leading-relaxed text-muted">
-                    <span
-                      aria-hidden="true"
-                      className="mt-2 size-1 shrink-0 rounded-full bg-[var(--scene-glow)]"
-                    />
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ol>
+      <LoopWalkthrough stages={loopStages} />
+
+      <Container className="pb-20 lg:pb-28">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-7 lg:p-10">
+          <h2 className="t-h3 text-ink">Why it is a loop and not a project</h2>
+          <p className="t-body mt-4 max-w-3xl">
+            Every stage produces something the next stage consumes, and the last one produces an
+            updated version of the first stage&rsquo;s input. Run once, it is a content project. Run
+            continuously, the plan gets better each cycle because it is built from what actually
+            happened last time rather than from what was assumed at the start.
+          </p>
+          <p className="t-body mt-4 max-w-3xl">
+            What this does not do is make outcomes certain. Search results and AI answers depend on
+            your site, your market and your competitors, none of which any tool controls. What the
+            loop controls is whether the work is done consistently, which is the part that usually
+            fails.
+          </p>
+        </div>
       </Container>
 
-      <WorkflowSection id="workflow-summary" showLink={false} />
-      <FaqSection id="how-faq" faqs={faqs} eyebrow="FAQ" title="How the loop runs" />
+      <FaqSection id="how-faq" faqs={loopFaqs} eyebrow="FAQ" title="How the loop runs" />
       <RelatedLinks paths={['/ai-seo-agent', '/seo-automation', '/geo-optimization']} />
       <CtaSection id="how-cta" />
     </>

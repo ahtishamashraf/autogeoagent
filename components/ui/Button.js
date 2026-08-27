@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
 import { ArrowRight } from './Icons';
+import { appLinkEvent, track } from '@/lib/analytics';
 
 const variants = {
   primary: 'btn-primary',
@@ -62,10 +63,19 @@ export default function Button({
   withArrow = false,
   external,
   magnetic = true,
+  onClick,
   ...rest
 }) {
   const magnet = useMagnetic(magnetic ? 0.22 : 0);
   const classes = cn('btn', variants[variant], sizes[size], className);
+
+  // Outbound links to the application are the site's conversion points, so
+  // they report themselves rather than relying on every caller remembering to.
+  const handleClick = (event) => {
+    const name = typeof href === 'string' ? appLinkEvent(href) : null;
+    if (name) track(name, { location: 'button', label: typeof children === 'string' ? children : undefined });
+    onClick?.(event);
+  };
 
   const content = (
     <>
@@ -92,6 +102,7 @@ export default function Button({
         href={href}
         className={cn(classes, 'group/btn')}
         rel="noopener"
+        onClick={handleClick}
         {...magnetProps}
         {...rest}
       >
@@ -102,14 +113,14 @@ export default function Button({
 
   if (href) {
     return (
-      <Link href={href} className={cn(classes, 'group/btn')} {...magnetProps} {...rest}>
+      <Link href={href} className={cn(classes, 'group/btn')} onClick={handleClick} {...magnetProps} {...rest}>
         {content}
       </Link>
     );
   }
 
   return (
-    <button type="button" className={cn(classes, 'group/btn')} {...magnetProps} {...rest}>
+    <button type="button" className={cn(classes, 'group/btn')} onClick={handleClick} {...magnetProps} {...rest}>
       {content}
     </button>
   );

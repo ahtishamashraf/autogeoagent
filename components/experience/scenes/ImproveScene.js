@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { stageById } from '@/content/story';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, lerp, smoothstep, stagedTime } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import SceneSection from './SceneSection';
 import SceneCopy from './SceneCopy';
 
@@ -17,11 +18,11 @@ import SceneCopy from './SceneCopy';
 const stage = stageById.improve;
 
 const WORDS = [
-  { text: 'Research.', in: [0.4, 0.45], out: [0.49, 0.53] },
-  { text: 'Create.', in: [0.5, 0.55], out: [0.59, 0.63] },
-  { text: 'Rank.', in: [0.6, 0.65], out: [0.69, 0.73] },
-  { text: 'Improve.', in: [0.7, 0.75], out: [0.78, 0.82] },
-  { text: 'Repeat.', in: [0.79, 0.84], out: [0.86, 0.89] },
+  { text: 'Research.', in: [0.38, 0.42], out: [0.45, 0.48] },
+  { text: 'Create.', in: [0.49, 0.53], out: [0.56, 0.59] },
+  { text: 'Rank.', in: [0.6, 0.64], out: [0.67, 0.7] },
+  { text: 'Improve.', in: [0.71, 0.75], out: [0.78, 0.81] },
+  { text: 'Repeat.', in: [0.82, 0.86], out: [0.88, 0.9] },
 ];
 
 export default function ImproveScene() {
@@ -29,7 +30,7 @@ export default function ImproveScene() {
   const fullRef = useRef(null);
 
   const rootRef = useSceneMotion(7, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(7));
     WORDS.forEach((word, i) => {
       const node = wordRefs.current[i];
       if (!node) return;
@@ -41,7 +42,7 @@ export default function ImproveScene() {
     });
 
     if (fullRef.current) {
-      const show = beat(t, 0.88, 0.93, 0.985, 1.0);
+      const show = beat(t, 0.91, 0.94, 0.99, 1.0);
       fullRef.current.style.opacity = show.toFixed(3);
       fullRef.current.style.visibility = show < 0.01 ? 'hidden' : 'visible';
       fullRef.current.style.transform = `translate3d(0, ${((1 - show) * 16).toFixed(1)}px, 0)`;
@@ -51,7 +52,7 @@ export default function ImproveScene() {
   return (
     <SceneSection id="improve" align="top">
       <div ref={rootRef} className="relative">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div data-copy-band className="grid grid-cols-1 gap-8 lg:grid-cols-12">
           <SceneCopy
             sceneIndex={7}
             className="max-w-2xl lg:col-span-6 lg:col-start-4 lg:text-center"
@@ -71,14 +72,14 @@ export default function ImproveScene() {
           </SceneCopy>
         </div>
 
-        <h3 className="pointer-events-none mt-12 text-center motion-safe:fixed motion-safe:inset-x-0 motion-safe:top-[34svh] motion-safe:mt-0 lg:motion-safe:top-[40svh]">
+        <h3 className="pointer-events-none mt-12 text-center motion-safe:fixed motion-safe:inset-x-0 motion-safe:top-[calc(var(--scene-band-center)-2.1rem)] motion-safe:mt-0">
           {WORDS.map((word, i) => (
             <span
               key={word.text}
               ref={(el) => {
                 wordRefs.current[i] = el;
               }}
-              className="reduced-hide absolute inset-x-0 top-0 block font-display text-[clamp(2.5rem,6vw,5.5rem)] font-semibold leading-none tracking-[-0.05em] text-ink opacity-0"
+              className="reduced-hide absolute inset-x-0 top-0 block font-display text-[clamp(2rem,4.4vw,4.25rem)] font-semibold leading-none tracking-[-0.05em] text-ink opacity-0"
             >
               {word.text}
             </span>

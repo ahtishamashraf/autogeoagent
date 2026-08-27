@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { stageById } from '@/content/story';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, smoothstep, stagedTime } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import SceneSection from './SceneSection';
 import SceneCopy from './SceneCopy';
 
@@ -18,8 +19,8 @@ import SceneCopy from './SceneCopy';
 const stage = stageById.geo;
 
 const PHRASES = [
-  { text: 'Search Has Changed.', in: [0.62, 0.68], out: [0.72, 0.76] },
-  { text: 'Your Strategy Should Too.', in: [0.74, 0.8], out: [0.84, 0.88] },
+  { text: 'Search Has Changed.', in: [0.64, 0.69], out: [0.73, 0.76] },
+  { text: 'Your Strategy Should Too.', in: [0.78, 0.83], out: [0.86, 0.89] },
 ];
 
 export default function GEOScene() {
@@ -31,10 +32,10 @@ export default function GEOScene() {
   const linkRef = useRef(null);
 
   const stageRef = useSceneMotion(2, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(2));
     /* --- the SEO / GEO split ------------------------------------ */
     if (splitRef.current) {
-      const show = beat(t, 0.44, 0.54, 0.6, 0.66);
+      const show = beat(t, 0.44, 0.52, 0.56, 0.62);
       splitRef.current.style.opacity = show.toFixed(3);
       splitRef.current.style.visibility = show < 0.01 ? 'hidden' : 'visible';
     }
@@ -61,7 +62,7 @@ export default function GEOScene() {
     });
 
     if (finaleRef.current) {
-      const show = beat(t, 0.86, 0.91, 0.98, 1.0);
+      const show = beat(t, 0.9, 0.93, 0.985, 1.0);
       finaleRef.current.style.opacity = show.toFixed(3);
       finaleRef.current.style.visibility = show < 0.01 ? 'hidden' : 'visible';
       finaleRef.current.style.transform = `scale(${lerp(0.9, 1, show)})`;

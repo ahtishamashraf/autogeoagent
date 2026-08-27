@@ -31,7 +31,7 @@ export default function SceneSection({ id, children, className, align = 'center'
           align === 'bottom' && 'items-end pb-[12svh]',
         )}
       >
-        <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-12 xl:px-[10.5rem]">{children}</div>
+        <div className="mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-12 xl:px-[11.5rem]">{children}</div>
       </div>
     </section>
   );

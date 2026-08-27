@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, clamp, lerp, smoothstep, stagedTime, stagger } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import { DataNote, Frame, FrameBar } from './primitives';
 
 /**
@@ -63,7 +64,7 @@ export default function AnalyticsDashboard({ sceneIndex = 6 }) {
   }, []);
 
   const root = useSceneMotion(sceneIndex, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(sceneIndex));
     const visible = beat(t, -0.02, 0.24, 0.78, 1);
     el.style.opacity = visible.toFixed(3);
     el.style.visibility = visible < 0.01 ? 'hidden' : 'visible';
@@ -139,7 +140,7 @@ export default function AnalyticsDashboard({ sceneIndex = 6 }) {
       >
         {/* Visibility trend */}
         <Frame tone="raised" className="order-2 lg:order-1">
-          <FrameBar title="Search visibility" right={<DataNote>Illustrative data</DataNote>} />
+          <FrameBar title="Search visibility" right={<DataNote short="Illustrative">Illustrative data</DataNote>} />
           <div className="px-4 pb-3 pt-4">
             <div className="grid grid-cols-3 gap-2">
               {TILES.map((tile, i) => (

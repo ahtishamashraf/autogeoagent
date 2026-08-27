@@ -6,6 +6,9 @@ import JsonLd from '@/components/seo/JsonLd';
 import { graph, organizationSchema, websiteSchema } from '@/lib/seo';
 import { site } from '@/lib/site';
 import { defaultOgImage } from '@/lib/metadata';
+import { robotsDirective } from '@/lib/deployment';
+import RouteScrollReset from '@/components/system/RouteScrollReset';
+import Analytics from '@/components/system/Analytics';
 
 const sora = Sora({
   subsets: ['latin'],
@@ -45,17 +48,7 @@ export const metadata = {
     images: [{ url: defaultOgImage, width: 1200, height: 630, alt: site.name }],
   },
   twitter: { card: 'summary_large_image' },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'max-video-preview': -1,
-    },
-  },
+  robots: robotsDirective,
 };
 
 export const viewport = {
@@ -70,10 +63,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang={site.language} className={`${sora.variable} ${inter.variable}`}>
       <body className="antialiased">
+        <RouteScrollReset />
         <JsonLd id="site-graph" data={graph([organizationSchema(), websiteSchema()])} />
         <Header />
         <main id="main">{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

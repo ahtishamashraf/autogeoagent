@@ -1,6 +1,6 @@
 import Experience from '@/components/experience/Experience';
 import CapabilitiesSection from '@/components/sections/CapabilitiesSection';
-import WorkflowSection from '@/components/sections/WorkflowSection';
+import WhySection from '@/components/sections/WhySection';
 import SeoGeoSection from '@/components/sections/SeoGeoSection';
 import UseCasesSection from '@/components/sections/UseCasesSection';
 import PricingSection from '@/components/sections/PricingSection';
@@ -53,10 +53,10 @@ export default function HomePage() {
       {/* Deeper, crawlable content — not a repeat of the story above */}
       <div className="relative z-10 bg-void">
         <CapabilitiesSection />
-        <WorkflowSection />
         <SeoGeoSection />
+        <WhySection />
         <UseCasesSection />
-        <PricingSection />
+        <PricingSection compact />
         <FaqSection faqs={homeFaqs} lead="What GetGeoAgent does, what it does not claim to do, and how to start." />
         <CtaSection />
       </div>

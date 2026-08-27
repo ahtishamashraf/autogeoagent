@@ -43,23 +43,53 @@ export const homeFaqs = [
 
 export const pricingFaqs = [
   {
-    question: 'How is GetGeoAgent priced?',
+    question: 'Is there a free plan?',
     answer:
-      'Plans are based on the scope of work an agent runs for you — how many sites and topics it covers, how much content it produces, and how frequently it re-runs its research and optimization cycles. Current plan details are shown in the application.',
+      'Yes. The Free plan lets you connect one website and run a limited analysis — keyword discovery, an SEO and GEO audit, AI visibility checks and content planning — so you can see what the agent finds before paying for anything.',
   },
   {
-    question: 'Is there a free trial?',
+    question: 'Can I upgrade or downgrade at any time?',
     answer:
-      'Trial availability is shown when you create an account. You can sign up and review the current options before committing to a plan.',
+      'Yes. Plan changes are made in your account settings inside the application and take effect on your billing cycle.',
   },
   {
-    question: 'Can I change plans later?',
+    question: 'Can I cancel my subscription?',
     answer:
-      'Plan changes are handled in your account settings inside the application.',
+      'Yes. You can cancel at any time from your account settings. Cancelling stops future renewals; it does not refund the current billing period unless required by law.',
   },
   {
-    question: 'What happens to content I have already created?',
+    question: 'What counts as a website?',
     answer:
-      'Content you have created and published remains yours. Terms covering ownership of generated content are set out in the Terms of Service.',
+      'One website is one domain the agent works on — its research, content plan, optimization recommendations and monitoring. Subdomains you manage separately count separately.',
+  },
+  {
+    question: 'What is a content generation?',
+    answer:
+      'One content generation is one piece of content the agent researches, structures and drafts, including its metadata and structured data. Editing or regenerating a draft you already created does not consume a new generation on every save.',
+  },
+  {
+    question: 'How does annual billing work?',
+    answer:
+      'Annual plans are billed once for twelve months at the discounted rate shown when the Annual toggle is selected. Monthly plans are billed every month and can be cancelled at any time.',
+  },
+  {
+    question: 'Does GetGeoAgent guarantee rankings?',
+    answer:
+      'No. Search engines decide what they rank. GetGeoAgent is designed to improve the relevance, structure and technical signals that make strong rankings more likely — results depend on your market, website and competition.',
+  },
+  {
+    question: 'Does GetGeoAgent guarantee AI citations?',
+    answer:
+      'No, and you should be sceptical of any product that claims otherwise. Generative engines decide what they retrieve and cite, and their behaviour changes frequently. GEO work improves the probability of being understood and referenced, not the certainty of it.',
+  },
+  {
+    question: 'Which integrations are included?',
+    answer:
+      'Google Search Console and Google Analytics 4 connections are available from the Starter plan upward, so performance data flows back into the agent\'s optimization cycle.',
+  },
+  {
+    question: 'Is there an agency plan?',
+    answer:
+      'Yes. The Agency plan covers up to ten websites with multiple workspaces, client organization, priority processing and agency reporting.',
   },
 ];

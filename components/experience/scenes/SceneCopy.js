@@ -2,6 +2,7 @@
 
 import { useSceneMotion } from '@/lib/hooks';
 import { clamp, lerp, smoothstep } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import { cn } from '@/lib/cn';
 
 /**
@@ -20,11 +21,13 @@ export default function SceneCopy({
   as: Tag = 'div',
 }) {
   const ref = useSceneMotion(sceneIndex, (el, t, state) => {
-    // Stacked layouts read as a vertical story: the copy fades in early and
+    // Where copy shares a column with its interface, the copy fades in early,
     // travels up into place as the section pins, then leaves through the same
-    // staging transform the interface layer uses, so the two stay in step.
-    const [inStart, inEnd] = state.stacked ? [0, 0.18] : enter;
-    const [outStart, outEnd] = state.stacked
+    // staging transform the interface uses — so the two stay in step and never
+    // occupy the same space.
+    const staged = state.stacked || usesTopBand(sceneIndex);
+    const [inStart, inEnd] = staged ? [0, 0.18] : enter;
+    const [outStart, outEnd] = staged
       ? [0.34 + exit[0] * 0.62, 0.34 + exit[1] * 0.62]
       : exit;
     const inT = smoothstep(inStart, inEnd, t);

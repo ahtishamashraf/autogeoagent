@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { site } from '@/lib/site';
 import { useSceneMotion } from '@/lib/hooks';
 import { beat, lerp, smoothstep, stagedTime } from '@/lib/animations';
+import { usesTopBand } from '@/lib/scene-config';
 import Button from '@/components/ui/Button';
 import { LogoMark } from '@/components/ui/Logo';
 import SceneSection from './SceneSection';
@@ -22,7 +23,7 @@ export default function FinalScene() {
   const eyebrowRef = useRef(null);
 
   const rootRef = useSceneMotion(8, (el, raw, state) => {
-    const t = stagedTime(raw, state.stacked);
+    const t = stagedTime(raw, state.stacked || usesTopBand(8));
     if (markRef.current) {
       // The mark forms as the core dissolves, then holds as a watermark.
       const show =
@@ -40,7 +41,7 @@ export default function FinalScene() {
     }
 
     if (lineOneRef.current) {
-      const show = beat(t, 0.5, 0.62, 0.72, 0.8);
+      const show = beat(t, 0.5, 0.6, 0.68, 0.73);
       lineOneRef.current.style.opacity = show.toFixed(3);
       lineOneRef.current.style.visibility = show < 0.01 ? 'hidden' : 'visible';
       lineOneRef.current.style.transform = `translate3d(0, ${((1 - show) * 22).toFixed(1)}px, 0)`;
@@ -48,7 +49,7 @@ export default function FinalScene() {
     }
 
     if (lineTwoRef.current) {
-      const show = smoothstep(0.74, 0.86, t);
+      const show = smoothstep(0.76, 0.86, t);
       lineTwoRef.current.style.opacity = show.toFixed(3);
       lineTwoRef.current.style.visibility = show < 0.01 ? 'hidden' : 'visible';
       lineTwoRef.current.style.transform = `translate3d(0, ${((1 - show) * 22).toFixed(1)}px, 0)`;

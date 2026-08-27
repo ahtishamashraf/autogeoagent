@@ -39,6 +39,7 @@ export default function StoryScene({ stage, sceneIndex, layout = 'left', childre
       <SceneSection id={stage.id} align="top">
         <SceneCopy sceneIndex={sceneIndex}>
           <div
+            data-copy-band
             className={cn(
               'grid items-end gap-x-10 gap-y-4 lg:grid-cols-12',
               layout === 'top-center' && 'text-center lg:text-left',
