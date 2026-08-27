@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="GetGeoAgent">
+  <defs>
+    <linearGradient id="ring" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7ee3f5"/>
+      <stop offset="0.55" stop-color="#3d7dfb"/>
+      <stop offset="1" stop-color="#7c5cff"/>
+    </linearGradient>
+    <radialGradient id="core" cx="0.5" cy="0.5" r="0.5">
+      <stop stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#9fd8ff"/>
+      <stop offset="1" stop-color="#3d7dfb"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#05070b"/>
+  <path d="M406.4 147.2A176 176 0 1 0 432 256v-3.2h-137.6" fill="none" stroke="url(#ring)" stroke-width="41.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="256" cy="256" rx="201.6" ry="80" transform="rotate(-32 256 256)" fill="none" stroke="url(#ring)" stroke-width="17.6" opacity="0.42"/>
+  <circle cx="256" cy="256" r="57.6" fill="url(#core)"/>
+  <circle cx="406.4" cy="147.2" r="33.6" fill="#7ee3f5"/>
+</svg>
